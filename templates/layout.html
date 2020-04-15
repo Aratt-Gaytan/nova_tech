@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <title>Recursos humanos</title>
+    <!---- Liga a bootstrap (framework CSS)--->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+    crossorigin="anonymous">
+    <!---- Liga a CSS local---->
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+</head>
+<body>
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <img src="{{ url_for('static', filename='Logo.png') }}" height="70" width="55">
+    <a class="navbar-brand" href="/">Home|Nova Tech</a>
+   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="true" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+    <main class="container">
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
+        <div class="dropdown mb-3">
+            <a  href="" class="btn btn-primary dropdown-toggle" role="button" id="catalagos" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Catalagos del sistema
+            </a>
+          <div class="dropdown-menu" aria-labelledby="catalagos">
+                <a href="/nivelacademico" class="dropdown-item">Nivel Academico</a>
+                <a href="/carrera" class="dropdown-item">Carrera</a>
+                <a href="/idioma" class="dropdown-item">Idioma</a>
+                <a href="/estado civil" class="dropdown-item">Estado Civil</a>
+                <a href="/habilidad" class="dropdown-item">Habilidad</a>
+                <div class="dropdown-divider"></div>
+                <a href="/puesto" class="dropdown-item">Puesto</a>
+                <a href="/funcion" class="dropdown-item">Función</a>
+              <a href="/area" class="dropdown-item">Área</a>
+                <a href="/medio de publicidad" class="dropdown-item">Medio de publicidad</a>
+                <a href="/contacto" class="dropdown-item">Contacto</a>
+                <a href="/datos de empresa" class="dropdown-item">Datos de la empresa</a>
+            </div>
+        </div>
+           <div class="dropdown mb-3">
+            <a  href="" class="btn btn-primary dropdown-toggle" role="button" id="empresa" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Procesos de la empresa
+            </a>
+          <div class="dropdown-menu" aria-labelledby="empresa">
+                <a href="/solicitud" class="dropdown-item">Solicitud de personal</a>
+                <a href="/#" class="dropdown-item">Autorizacion de solicitud</a>
+                <a href="/#" class="dropdown-item">Publicacion de oferta</a>
+                <a href="/#" class="dropdown-item">Captura de solicitud</a>
+
+    </main>
+    </div>
+    </nav>
+
+
+{% block content %}
+{% endblock %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.slim.min.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/popper.min.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
+
+
+</body>
