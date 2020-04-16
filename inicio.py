@@ -964,4 +964,8 @@ def borra_solicitud(id):
 
 
 
+@app.route("/faltante")
+def faltante():
+    return render_template("faltante.html")
+
 
