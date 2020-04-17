@@ -1,4 +1,4 @@
-###   idioma   contacto
+
 
 import pymysql
 from flask import Flask, render_template, request, url_for, redirect
@@ -375,7 +375,7 @@ def agrega_puesto():
         cursor.execute('select idIdioma, Lenguaje from idioma order by Lenguaje')
         datos4 = cursor.fetchall()
         return render_template("edi_puesto.html", puestos = datos, pue_habs=datos1,pue_idis=datos2, habs=datos3, idiomas=datos4 )
-       
+
 
 
 @app.route('/modifica_puesto/<string:id>', methods=['POST'])
@@ -716,7 +716,7 @@ def nvo_contacto():
 def contacto():
     conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
     cursor = conn.cursor()
-    cursor.execute('select idcontacto, Nombre, Domicilio, Razon_Social,Telefono from contacto order by Nombre')
+    cursor.execute('select idPublicidad, NombreEmpresa, Domicilio, Razon_Social,Telefono from contacto  order by NombreEmpresa')
     dato = cursor.fetchall()
     return render_template("Contacto.html", niveles=dato)
 
@@ -729,7 +729,7 @@ def agrega_contacto():
         aux_numero = request.form['Numero']
         conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
         cursor = conn.cursor()
-        cursor.execute('insert into Contacto (Nombre, Domicilio, Razon_Social,Telefono) values (%s,%s,%s,%s)',
+        cursor.execute('insert into contacto (NombreEmpresa, Domicilio, Razon_Social,Telefono) values (%s,%s,%s,%s)',
                        (aux_nombre, aux_domicilio, aux_razon,aux_numero))
         conn.commit()
     return redirect(url_for('contacto'))
@@ -738,7 +738,7 @@ def agrega_contacto():
 def ed_contacto(id):
     conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
     cursor = conn.cursor()
-    cursor.execute('select idcontacto, Nombre, Domicilio, Razon_Social,Telefono from contacto where idcontacto = %s', (id))
+    cursor.execute('select idPublicidad, NombreEmpresa, Domicilio, Razon_Social,Telefono from contacto where idPublicidad = %s', (id))
     dato = cursor.fetchall()
     return render_template("edi_contacto.html", niveles=dato, id=id)
 
@@ -751,7 +751,7 @@ def modifica_contacto(id):
         num = request.form['Numero']
         conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
         cursor = conn.cursor()
-        cursor.execute('update contacto set  Nombre=%s,Domicilio=%s,Razon_Social=%s,Telefono=%s where idcontacto=%s', (descrip,domic,razsoc,num, id))
+        cursor.execute('update contacto set  NombreEmpresa=%s,Domicilio=%s,Razon_Social=%s,Telefono=%s where idPublicidad=%s', (descrip,domic,razsoc,num, id))
         conn.commit()
     return redirect(url_for('contacto'))
 
@@ -759,7 +759,7 @@ def modifica_contacto(id):
 def bo_contacto(id):
     conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
     cursor = conn.cursor()
-    cursor.execute('delete from contacto where idcontacto = {0}'.format(id))
+    cursor.execute('delete from contacto where idPublicidad = {0}'.format(id))
     conn.commit()
     return redirect(url_for('contacto'))
 
@@ -819,13 +819,13 @@ def modifica_datos(id):
         dom = request.form['Domicilio']
         tel = request.form['Telefono']
         enc = request.form['Encargado']
-        cif = request.form['CIF_de_empresa']
+
 
         conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
         cursor = conn.cursor()
         cursor.execute(
-            'update datos_de_empresa set Nombre_de_empresa=%s, Descripcion=%s, Estructura_juridica=%s ,Razonsocial=%s, E_mail=%s, Domicilio=%s, Telefono=%s, Encargado=%s, CIF_empresa=%s  where Nombre_de_empresa=%s',
-            (nom, des, est, raz, ema, dom, tel, enc, cif, id))
+            'update datos_de_empresa set Nombre_de_empresa=%s, Descripcion=%s, Estructura_juridica=%s ,Razonsocial=%s, E_mail=%s, Domicilio=%s, Telefono=%s, Encargado=%s  where Nombre_de_empresa= %s ',
+            (nom, des, est, raz, ema, dom, tel, enc,  id))
         conn.commit()
     return redirect(url_for('datos'))
 
@@ -877,10 +877,10 @@ def borrar_datosempresa(id):
 
 @app.route("/solicitud")
 def solicitud():
- 
+
     conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
     cursor = conn.cursor()
-    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion 
+    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
         from solicitud a, area b, puesto c, nivelacademico d , carrera e,  estatus_solicitud f
         where b.idArea=a.idArea and c.idPuesto=a.idPuesto and d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud ''')
     datos=cursor.fetchall()
@@ -893,7 +893,7 @@ def nvo_solicitud():
     cursor = conn.cursor()
     cursor.execute('select idArea, AreaDescripcion from area')
     datos=cursor.fetchall()
-    
+
     cursor.execute('select idPuesto, Descripcion from puesto')
     datos1=cursor.fetchall()
     cursor.execute('select idCarrera, Descripcion from carrera')
@@ -923,10 +923,10 @@ def ed_solicitud(id):
     cursor = conn.cursor()
     cursor.execute('select *from solicitud where idSolicitud=%s',(id))
     datos4=cursor.fetchall()
-    
+
     cursor.execute('select idArea, AreaDescripcion from area')
     datos=cursor.fetchall()
-    
+
     cursor.execute('select idPuesto, Descripcion from puesto')
     datos1=cursor.fetchall()
     cursor.execute('select idCarrera, Descripcion from carrera')
@@ -935,7 +935,7 @@ def ed_solicitud(id):
     datos3=cursor.fetchall()
     cursor.execute('select idEstatus_Solicitud, Descripcion from estatus_solicitud')
     datos5=cursor.fetchall()
-    
+
     return render_template("edi_solicitud.html", areas=datos,puestos=datos1, carreras=datos2,niveles=datos3, solicitud=datos4,estatuses=datos5)
 @app.route("/edita_solicitud/<string:id>",methods=["POST"])
 def edita_solicitud(id):
@@ -957,15 +957,18 @@ def edita_solicitud(id):
 @app.route("/bo_solicitud/<string:id>")
 def borra_solicitud(id):
     conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
-    cursor = conn.cursor() 
+    cursor = conn.cursor()
     cursor.execute('delete from solicitud where idSolicitud=%s',(id))
     conn.commit()
     return redirect(url_for("solicitud"))
 
-
-
 @app.route("/faltante")
 def faltante():
     return render_template("faltante.html")
+
+
+
+
+
 
 
