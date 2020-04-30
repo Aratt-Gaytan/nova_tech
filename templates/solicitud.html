@@ -40,17 +40,26 @@
                       {{ dato.1 }}
                     </td>
                     <td>
-                      {{ dato.3 }}
+                      {{ dato.2 }}
                     </td>
                      <td>
                       {{ dato.12 }}
                     </td>
-                    <td bgcolor="#129OC2" width="60">
+                    {% if dato.11 != 10 %}
+                     <td bgcolor="#129OC2" width="60">
+                      <center><a  style="color:#FFFFFF;" href='#' >-------</a></center>
+                    </td>
+                    <td  bgcolor="#00C56C"  width="60">
+                      <center><a  style="color:#FFFFFF;" href='#' >-------</a></center>
+                    </td>
+                    {% else %}
+                   <td bgcolor="#129OC2" width="60">
                       <center><a  style="color:#FFFFFF;" href="/ed_solicitud/{{dato.0}}" >Editar</a></center>
                     </td>
                     <td  bgcolor="#00C56C"  width="60">
                       <center><a  style="color:#FFFFFF;" href="/bo_solicitud/{{dato.0}}" >Borrar</a></center>
                     </td>
+                    {% endif %}
 
                   </tr>
                 {% endfor %}

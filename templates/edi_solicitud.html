@@ -2,22 +2,22 @@
 {% block content %}
 <body>
     <form action="/edita_solicitud/{{solicitud.0[0]}}" method="post">
-      
-      
+
+
             <p><h2>Solicitud</h2></p>
             <table>
   <tr>
         <td>
                   <p><h4>Fecha de solicitud</h4></p>
-              
-              
+
+
             <input type="date"  name="Fecha" value="{{solicitud.0[1]}}">   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
  </td>
  <td>
       <p><h4>Vacantes</h4></p>
-            
+
             <input type="text"  name="vacantes" value="{{solicitud.0[2]}}" >
-     </td> 
+     </td>
 
     </tr>
 
@@ -37,10 +37,10 @@
                  {% endif %}
                 {% endfor %}
 
-            </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   
+            </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  <center><h4><a>Puesto</a></h4></center>
                     <select style="background-color: #1290C2; color: #FAFAFA; width:500px"  id="puesto" name="puesto" class="form-control">
-          
+
                         {% for puesto in puestos %}
                           {% if solicitud.0[4] ==puesto.0 %}
                  <option selected="true"  style="background-color: #FFFFFF; color:#000000" value="{{puesto.0}}">{{puesto.1}}</option>
@@ -54,13 +54,13 @@
 </td>
 <td>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</td>  
-  
+</td>
+
 <td>
  <center><h4><a>Carrera</a></h4></center>
 
                 <select  style="background-color: #1290C2; color: #FAFAFA; width:500px"  id="Carrera" name="Carrera" class="form-control">
-                  
+
                     {% for carrera in carreras %}
                      {% if solicitud.0[7] ==carrera.0 %}
                  <option selected="true"  style="background-color: #FFFFFF; color:#000000" value="{{carrera.0}}">{{carrera.1}}</option>
@@ -68,7 +68,7 @@
                      <option style="background-color: #FFFFFF; color:#000000"value="{{carrera.0}}">{{carrera.1}}</option>
                      {% endif %}
                     {% endfor %}
-  
+
                 </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                  <center><h4><a>Nivel Academico</a></h4></center>
             <select style="background-color:#38E82A;  color: #FAFAFA; width:500px"  id="nivel" name="nivel" class="form-control">
@@ -88,7 +88,7 @@
   <center><h4><a>Estatus </a></h4></center>
 
 <select  style="background-color:#38E82A;  color: #FAFAFA; width:500px" id="estatus" name="estatus" class="form-control">
-                  
+
                     {% for estatus in estatuses %}
                      {% if solicitud.0[5] ==estatus.0 %}
                  <option selected="true"  style="background-color: #FFFFFF; color:#000000" value="{{estatus.0}}">{{estatus.1}}</option>
@@ -96,17 +96,17 @@
                      <option style="background-color: #FFFFFF; color:#000000"value="{{estatus.0}}">{{estatus.1}}</option>
                      {% endif %}
                     {% endfor %}
-  
+
                 </select>
                 </table>
   </td>
 
 <br>
- 
+
             <br>
             <br>
             <button class="btn btn-primary">Aceptar</button>
-            <button href=" /silocitud"class="btn btn-primary">Cancelar</button>
+
 
      </form>
 
