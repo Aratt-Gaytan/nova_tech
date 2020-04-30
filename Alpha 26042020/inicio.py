@@ -968,6 +968,36 @@ def faltante():
 
 
 
+@app.route("/Autorizacion")
+def Autorizacion():
+    conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
+    cursor = conn.cursor()
+    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
+        from solicitud a, area b, puesto c, nivelacademico d , carrera e,  estatus_solicitud f
+        where b.idArea=a.idArea and c.idPuesto=a.idPuesto and d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud and a.idCarrera=e.idCarrera''')
+    datos=cursor.fetchall()
+
+    return render_template("autoriza.html",datos=datos)
+@app.route("/auto_solicitud/<string:id>")
+def auto_solicitud(id):
+    conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
+    cursor = conn.cursor()
+    cursor.execute(''' update solicitud set idEstatus_solicitud=11 where idSolicitud=%s''',(id))
+    conn.commit()
+
+
+    return redirect(url_for('Autorizacion'))
+@app.route("/can_solicitud/<string:id>")
+def can_solicitud(id):
+    conn = pymysql.connect(host='Aratt.mysql.pythonanywhere-services.com', user='Aratt', passwd='tacosdechile',db='Aratt$default')
+    cursor = conn.cursor()
+    cursor.execute(''' update solicitud set idEstatus_solicitud=15 where idSolicitud=%s''',(id))
+    conn.commit()
+    return redirect(url_for('Autorizacion'))
+
+
+
+
 
 
 
