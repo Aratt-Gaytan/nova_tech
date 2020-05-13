@@ -1,0 +1,25 @@
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+<body>
+    <form action="/agr_funcion" method="post">
+        <div class="form-group col-md-4">
+        </div>
+        <div class="form-group col-md-4">
+            <div class="col">
+
+            <p><h2>Agregar nueva función</h2><p>
+            <p><h4>Descripción de la función:</h4><div>
+            <input type="text" class="form-control" name="descripcion" id="descripcion" placeholder="Descripción de la funcion"></input>
+             <br>
+            <br>
+            <button class="btn btn-primary">Aceptar</button>
+            </div>
+            </div>
+
+     </form>
+{% endblock %}  
+</body>
+
