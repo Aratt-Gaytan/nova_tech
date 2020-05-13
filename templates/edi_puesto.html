@@ -41,8 +41,8 @@
                           <input class="form-check-input" type="radio" name="autorizar" id="autorizar2" value="1">
                           <label class="form-check-label" for="autorizar2">No</label>
                       </div>
-                  {% endif %}
-                  {% if puestos.0[5]==1%}
+                  {% else %}
+
                       <div class="form-check rorm-check-inline">
                           <input class="form-check-input" type="radio" name="autorizar" id="autorizar1" value="0" >
                           <label class="form-check-label" for="autorizar1">Si</label>
@@ -56,7 +56,7 @@
               </div>
 
               <button type="submit" class="btn btn-primary">Actualiza</button>
-                   <button href="/puesto" class="btn btn-primary">Cancelar</button>
+
             </form>
 <!-- -----------------------------------------------------------------  -->
             <br>
