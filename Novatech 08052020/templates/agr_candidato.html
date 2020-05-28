@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block content %}
+                    <center><h3>Agregar Candidato</h3></center>
+            <form action="/agrega_candidato" method="post">
+         
+              <div class="form-row">
+
+                <div class="form-group col-md-2">
+                  <label for="curp">Curp</label>
+                    <input type="text" class="form-control" name="curp" id="curp" placeholder="XXXX000000XXXXXX00">
+                </div>
+ <div class="form-group col-md-4">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" name="nombre" id="nombre" placeholder="apellido paterno materno nombre(s)">
+                    </div>
+ <div class="form-group col-md-4">
+                        <label for="rfc">RFC</label>
+                        <input type="text" class="form-control" name="rfc" id="rfc" placeholder="XXXX0000000X0">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="telefono">Numero telefonico</label>
+                        <input type="text" class="form-control" name="telefono" id="telefono" placeholder="0000000000">
+                    </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="form-group col-md-2">
+                        <label for="domicilio">Domicilio</label>
+                        <input type="text" class="form-control" name="domicilio" id="domicilio" placeholder="colonia calle numero">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="email">Correo electronico</label>
+                        <input type="text" class="form-control" name="email" id="email" placeholder="XXXXX@XXXXXX.com">
+                    </div>
+                     <div class="form-group col-md-2">
+                        <label for="nss">Numero de seguridad social</label>
+                        <input type="text" class="form-control" name="nss" id="nss" placeholder="00000000000">
+                    </div>
+                     </div>
+
+                      <div class="form-row">
+                        <div class="form-group col-md-1">
+                        <label for="edad">Edad</label>
+                        <input type="text" class="form-control" name="edad" id="edad" placeholder="00">
+                    </div>
+                     <div class="form-group col-md-2">
+                        <label for="imagen">Fotografia</label>
+                        <input type="file"  name="imagen" id="imagen">
+                    </div>
+           
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   
+                    <div class="form-group col-md-2">
+                      <label>Sexo</label>&nbsp;&nbsp;&nbsp;&nbsp;
+
+                  <div class="form-check rorm-check-inline">
+                      <input class="form-check-input" type="radio" name="sexo" id="H" value="Hombre">
+                      <label class="form-check-label" for="H">Hombre</label>
+                  </div>
+                  <div class="form-check rorm-check-inline">
+                      <input class="form-check-input" type="radio" name="sexo" id="M" value="Mujer">
+                      <label class="form-check-label" for="M">Mujer</label>
+                  </div>
+                   </div> 
+                   <div class="form-group col-md-2">
+                       <label for="estadoc">Estado civil</label>
+                    <select style="background-color: #1290C2; color: #FAFAFA; width:250px"  id="estadoc" name="estadoc" class="form-control">
+                        <option value="-----">-----</option>
+                        {% for dato in datos %}
+                         <option style="background-color: #FFFFFF; color:#000000" value="{{dato.0}}">{{dato.1}}</option>
+                        {% endfor %}
+                    </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+                   </div>
+              </div>
+
+              <div class="form-row">
+                 
+              </div>
+
+              <button type="submit" class="btn btn-primary">Agrega</button>
+            </form>
+
+
+
+{% endblock %}
