@@ -2,22 +2,22 @@
 {% block content %}
 <body>
     <form action="/agr_solicitud" method="post">
-      
-      
+
+
             <p><h2>Solicitud</h2></p>
             <table>
 	<tr>
       	<td>
                 	<p><h4>Fecha de solicitud</h4></p>
-            	
-            	
-            <input type="date"  name="Fecha"  placeholder="Fecha de solicitud" >   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+
+
+            <input type="date"  name="Fecha"  placeholder="Fecha de solicitud" required>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
  </td>
  <td>
 		  <p><h4>Vacantes</h4></p>
-          	
-            <input type="text"  name="vacantes"  placeholder="vacantes" >
-     </td> 
+
+            <input type="text"  name="vacantes"  placeholder="vacantes" required>
+     </td>
 
     </tr>
 
@@ -32,7 +32,7 @@
                 {% for area in areas %}
                  <option style="background-color: #FFFFFF; color:#000000" value="{{area.0}}">{{area.1}}</option>
                 {% endfor %}
-            </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 	
+            </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
                     <select style="background-color: #1290C2; color: #FAFAFA; width:500px"  id="puesto" name="puesto" class="form-control">
                         <option value="Nivel Academico">Puesto</option>
@@ -43,8 +43,8 @@
 </td>
 <td>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</td>  
-	
+</td>
+
 <td>
 
                 <select  style="background-color: #1290C2; color: #FAFAFA; width:500px"  id="Carrera" name="Carrera" class="form-control">
