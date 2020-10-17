@@ -1,0 +1,7 @@
+git init
+git add .
+git commit -m 'semana de //nimero de lunes\\ al //numero de viernes\\'
+git branch semana_del_//nimero de lunes\\_al_//numero de viernes\\
+git checkout semana_del_//nimero de lunes\\_al_//numero de viernes\\
+git remote add origin https://github.com/Aratt-Gaytan/nova_tech.git
+git push -u origin semana_del_//nimero de lunes\\_al_//numero de viernes\\
