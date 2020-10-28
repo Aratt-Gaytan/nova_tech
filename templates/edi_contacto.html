@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-            <form action="/modifica_contacto/{{id.0}}" method="post">
+            <form action="/modifica_contacto/{{id}}" method="post">
                     {% for nivel in niveles %}
             <div class="form-group col-md-4">
                     </div>
@@ -21,7 +21,7 @@
                     <input type="text" rows="3" cols="50" class="form-control" id="razonsocial" size="55" style="WIDTH: 400px; HEIGHT: 30px" name="razonsocial" value="{{nivel.3}}" required>
 
                   <h4><label for="Numero">Telefono</label></h4>
-                    <input type="text" rows="3" cols="50" class="form-control" id="Numero" size="55" style="WIDTH: 400px; HEIGHT: 30px" name="Numero"  value="{{nivel.4}}" required>
+                    <input type="text" rows="3" cols="50" class="form-control" id="Numero" size="55" style="WIDTH: 400px; HEIGHT: 30px" name="Numero"  value="{{nivel.4}}" pattern="[0-9]{10}" required>
 
 
                 {% endfor %}

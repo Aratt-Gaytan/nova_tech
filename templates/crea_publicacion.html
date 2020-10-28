@@ -106,15 +106,15 @@
             </div>
             <div class="form-group col-md-3">
                 <label for="fecha_pub">Fecha de publicacion</label>
-                <input type="date" class="form-control" name="fecha_pub" id="fecha_pub">
+                <input type="date" class="form-control" name="fecha_pub" id="fecha_pub" required>
             </div>
             <div class="form-group col-md-3">
                 <label for="fecha_cie">Fecha de termino de Publicacion</label>
-                <input type="date" class="form-control" name="fecha_cie" id="fecha_cie">
+                <input type="date" class="form-control" name="fecha_cie" id="fecha_cie" required>
             </div>
             <div class="col-x3-1">
                 <label for="n_solicitantes">Numero de solicitantes</label>
-                <input type="text" class="form-control" name="n_solicitantes" id="n_solicitantes" value="{{ sol.6 }}">
+                <input type="text" class="form-control" name="n_solicitantes" id="n_solicitantes" value="{{ sol.6 }}" required>
             </div>
         </div>
         <label for="contacto">Contacto</label>
@@ -122,8 +122,8 @@
             &nbsp; &nbsp;
             <div class="form-group col-md-5">
                 <label for="contacto">Contacto</label>
-                <select name="contacto" id="contacto" class="form-control" style="width:500px">
-                    <option value="0" selected>Choose...</option>
+                <select name="contacto" id="contacto" class="form-control" style="width:500px" required>
+                    <option value="" selected>Choose...</option>
                     {% for contacto in contactos %}
                     <option value="{{ contacto.0 }}"> {{ contacto.1 }}</option>
                     {% endfor %}
@@ -131,8 +131,8 @@
             </div>
             <div class="form-group col-md-5">
                 <label for="medio">Medio de Publicidad</label>
-                <select name="medio" id="medio" class="form-control" style="widht:5000px">
-                    <option value="0" selected>Choose...</option>
+                <select name="medio" id="medio" class="form-control" style="widht:5000px" required>
+                    <option value="" selected>Choose...</option>
                     {% for medio in medios %}
                     <option value="{{ medio.0 }}"> {{ medio.1 }}</option>
                     {% endfor %}

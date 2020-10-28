@@ -70,8 +70,8 @@
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <input type="hidden" name="pto" id="pto" value="{{puestos.0[0]}}" >
                              <label for="habil">Habilidad</label>&nbsp;&nbsp;&nbsp;
-                             <select name="habil" id="habil" class="form-control" >
-                             <option value="0" selected>Choose...</option>
+                             <select name="habil" id="habil" class="form-control" required>
+                             <option value="" selected>Choose...</option>
                                  {%
                                      for hab in habs
                                  %}
@@ -79,7 +79,7 @@
                                 {%   endfor %}
                              </select>&nbsp;&nbsp;&nbsp;
                              <label for="expe">Experiencia</label>&nbsp;&nbsp;&nbsp;
-                             <input type="text" class="form-control" name="expe" id="expe" placeholder="tiempo de experiencia">&nbsp;&nbsp;&nbsp;
+                             <input type="text" class="form-control" name="expe" id="expe" placeholder="tiempo de experiencia" required>&nbsp;&nbsp;&nbsp;
                          </div>&nbsp;&nbsp;&nbsp;
                         <button type="submit" class="btn btn-primary">Agrega habilidad</button>
                     </form>
@@ -128,8 +128,8 @@
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <input type="hidden" name="ptoi" id="ptoi" value="{{puestos.0[0]}}" >
                              <label for="idio">Idioma</label>&nbsp;&nbsp;&nbsp;
-                             <select name="idio" id="idio" class="form-control">
-                             <option value="0" selected>Choose...</option>
+                             <select name="idio" id="idio" class="form-control" required>
+                             <option value="" selected>Choose...</option>
                                  {%
                                      for idioma in idiomas
                                  %}
@@ -137,7 +137,7 @@
                                 {%   endfor %}
                              </select>&nbsp;&nbsp;&nbsp;
                              <label for="nive">Nivel</label>&nbsp;&nbsp;&nbsp;
-                             <input type="text" class="form-control" name="nive" id="nive" placeholder="Nivel en el idioma" >&nbsp;&nbsp;&nbsp;
+                             <input type="text" class="form-control" name="nive" id="nive" placeholder="Nivel en el idioma" required>&nbsp;&nbsp;&nbsp;
                          </div>&nbsp;&nbsp;&nbsp;
                         <button type="submit" class="btn btn-primary">Agrega Idioma</button>
                     </form>

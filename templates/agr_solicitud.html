@@ -26,16 +26,16 @@
 <br>
          <table>
             <td>
-            <select style="background-color: #38E82A; color: #FAFAFA; width:500px"  id="area" name="area" class="form-control">
+            <select style="background-color: #38E82A; color: #FAFAFA; width:500px"  id="area" name="area" class="form-control" required>
 
-                <option value="0">Area</option>
+                <option value="">Area</option>
                 {% for area in areas %}
                  <option style="background-color: #FFFFFF; color:#000000" value="{{area.0}}">{{area.1}}</option>
                 {% endfor %}
             </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                    <select style="background-color: #1290C2; color: #FAFAFA; width:500px"  id="puesto" name="puesto" class="form-control">
-                        <option value="Nivel Academico">Puesto</option>
+                    <select style="background-color: #1290C2; color: #FAFAFA; width:500px"  id="puesto" name="puesto" class="form-control" required>
+                        <option value="">Puesto</option>
                         {% for puesto in puestos %}
                          <option style="background-color: #FFFFFF; color:#000000" value="{{puesto.0}}">{{puesto.1}}</option>
                         {% endfor %}
@@ -47,14 +47,14 @@
 
 <td>
 
-                <select  style="background-color: #1290C2; color: #FAFAFA; width:500px"  id="Carrera" name="Carrera" class="form-control">
-                    <option value="Carrera">Carrera</option>
+                <select  style="background-color: #1290C2; color: #FAFAFA; width:500px"  id="Carrera" name="Carrera" class="form-control"required>
+                    <option value="">Carrera</option>
                     {% for carrera in carreras %}
                      <option style="background-color: #FFFFFF; color:#000000"value="{{carrera.0}}">{{carrera.1}}</option>
                     {% endfor %}
                 </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <select style="background-color:#38E82A;  color: #FAFAFA; width:500px"  id="nivel" name="nivel" class="form-control">
-                <option value="Idioma">Nivel Academico</option>
+            <select style="background-color:#38E82A;  color: #FAFAFA; width:500px"  id="nivel" name="nivel" class="form-control"required>
+                <option value="">Nivel Academico</option>
                 {% for nivel in niveles %}
                  <option style="background-color: #FFFFFF; color:#000000"value="{{nivel.0}}">{{nivel.1}}</option>
                 {% endfor %}

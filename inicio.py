@@ -3,14 +3,119 @@ import pymysql
 from flask import Flask, render_template, request, url_for, redirect
 ## se crea un app de flask para poder abrir la pagina web
 app = Flask(__name__)
-
+estatus=0
 ## se define el home
 @app.route("/")
 def home():
-    return render_template("home.html")
+    global estatus
+    return render_template("home.html", estatus=estatus)
+
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+
+@app.route("/perfil")
+def adminp():
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM perfi_admo ")
+    perfiles= cursor.fetchall()
+    return render_template("perfil.html",perfiles=perfiles)
+
+@app.route("/agrega_permisos" , methods=["POST"])
+def agrega_permisos():
+  if request.method == 'POST':
+    nombres = []
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute("SELECT Id_proceso FROM proceso ")
+    procesos =  cursor.fetchall()
+    for proceso in procesos:
+        proc = request.form["autorizar"+str(proceso[0])]
+        nombres.extend(proc)
+        print(nombres)
+    cursor.execute("SELECT id_usuario FROM usuario ")
+    usuarios =  cursor.fetchall()
+    cursor.execute("SELECT id_perfil FROM perfil_admo ")
+    perfiles =  cursor.fetchall()
+    for perfil in perfiles:
+        for usuario in usuarios:
+            for nombre in nombres:
+                cursor.execute('insert into perfil_has_proceso  (id_Perfil,id_Proceso,id_permiso) values (%s,%s,%s)', (perfil[0],usuario[0],nombre[0]))
+                conn.commit()
+    conn.close
+    return redirect(url_for('home'))
+
+
+
+@app.route("/inicia" , methods=["POST"])
+def inicia():
+    global estatus
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+
+    if request.method == 'POST':
+        nombre= request.form["txtusuario"]
+        passw= request.form["txtpassword"]
+        print(passw)
+        print(nombre)
+        cursor = conn.cursor()
+        cursor.execute("SELECT idusuario, usuario,password FROM Usuario ")#WHERE usuarios = '%s' and Password = '$s' ",(nombre,passw))
+        datos= cursor.fetchall()
+        print(datos)
+        conn.close()
+        #nr =  mysqli_num_rows(datos)
+        for dato in datos:
+            if dato[1]==nombre and dato[2]==passw:
+
+                print("Bienvenido: " )
+                estatus=1
+                return redirect(url_for('home'))
+        print("No ingreso")
+        return render_template("login.html")
+@app.route("/logout")
+def logout():
+    global estatus
+    estatus=0
+    return redirect(url_for('home'))
+
+@app.route("/registro")
+def registro():
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM perfil_admo ")
+    perfiles =  cursor.fetchall()
+    print (perfiles)
+    return render_template("registro.html", perfiles= perfiles)
+
+
+
+@app.route("/registrar",methods=["POST"])
+def registrar():
+    if request.method == 'POST':
+        usu= request.form["user"]
+        passw= request.form["password"]
+        nombre= request.form["nombre"]
+        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+        cursor = conn.cursor()
+        cursor.execute('insert into Usuario (usuario,Password,Nombre) values (%s,%s,%s)', (usu,passw,nombre))
+        conn.commit()
+        conn.close()
+    return redirect(url_for('home'))
+
+
+
+
+
+
+
+
+
+
 ###################################################### catalogo de candidato#############################################################################
 ## muestra la tabla con los candidatos y la opcion de editar, agregar o borrar
-@app.route("/candidato")
+@app.route("/solicitante")
 def candidato():
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
@@ -20,7 +125,7 @@ def candidato():
     return render_template("candidato.html", candidatos=datos)
 
 ## abre el html para agregar un candidato
-@app.route("/agregar_candidato")
+@app.route("/agregar_solicitante")
 def agregar_candidato():
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
@@ -30,7 +135,7 @@ def agregar_candidato():
     return render_template("agr_candidato.html", datos=datos)
 
 ## agrega el candidato a la base de datos
-@app.route("/agrega_candidato", methods=["POST"])
+@app.route("/agrega_solicitante", methods=["POST"])
 def agrega_candidato():
     if request.method == 'POST':
         aux_curp = request.form['curp']
@@ -39,6 +144,7 @@ def agrega_candidato():
         aux_telefono = request.form['telefono']
         aux_domicilio = request.form['domicilio']
         aux_nss = request.form['nss']
+        print(aux_nss, "si")
         aux_edad = request.form['edad']
         aux_sexo = request.form['sexo']
         aux_estadociv = request.form['estadoc']
@@ -85,7 +191,7 @@ def agrega_candidato():
                                nivelesC=datos9, carrerasN=datos10)
 
 ## abre el html para editar el candidato
-@app.route("/ed_candidato/<string:id>")
+@app.route("/ed_solicitante/<string:id>")
 def ed_candidato(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
@@ -93,6 +199,7 @@ def ed_candidato(id):
         ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
         (id))
     datos = cursor.fetchall()
+    print(datos)
     cursor.execute(' select * from habilidad ')
     datos1 = cursor.fetchall()
     cursor.execute(' select * from idioma ')
@@ -125,7 +232,7 @@ def ed_candidato(id):
                            nivelesC=datos9, carrerasN=datos10)
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
-@app.route("/modifica_candidato/<string:id>", methods=["POST"])
+@app.route("/modifica_solicitante/<string:id>", methods=["POST"])
 def modifica_candidato(id):
     if request.method == 'POST':
         aux_curp = request.form['curp']
@@ -161,7 +268,7 @@ def modifica_candidato(id):
         return redirect(url_for('candidato'))
 
 ## agrega las habilidades asociadas del candidato
-@app.route("/agrega_hab_candidato/<string:id>/<string:idh>", methods=["POST"])
+@app.route("/agrega_hab_solicitante/<string:id>/<string:idh>", methods=["POST"])
 def agrega_hab_candidato(id, idh):
     if request.method == 'POST':
         aux_pto = request.form['can']
@@ -208,7 +315,7 @@ def agrega_hab_candidato(id, idh):
                                nivelesC=datos9, carrerasN=datos10)
 ## borra las habilidades asociadas del candidato
 
-@app.route("/bo_hab_can/<string:id>/<string:idh>")
+@app.route("/bo_hab_sol/<string:id>/<string:idh>")
 def bo_hab_can(id, idh):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
@@ -250,7 +357,7 @@ def bo_hab_can(id, idh):
                            nivelesC=datos9, carrerasN=datos10)
 
 ## agrega los idiomas asociadas del candidato
-@app.route("/agrega_idio_can/<string:id>/<string:idi>", methods=["POST"])
+@app.route("/agrega_idio_sol/<string:id>/<string:idi>", methods=["POST"])
 def agrega_idio_candidato(id, idi):
     if request.method == 'POST':
         aux_pto = request.form['cani']
@@ -297,7 +404,7 @@ def agrega_idio_candidato(id, idi):
                                nivelesC=datos9, carrerasN=datos10)
 
 ## borra los idiomas asociados al candidato
-@app.route("/bo_idi_can/<string:id>/<string:idi>")
+@app.route("/bo_idi_sol/<string:id>/<string:idi>")
 def bo_idio_can(id, idi):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
@@ -340,7 +447,7 @@ def bo_idio_can(id, idi):
 
 
 ## agrega los niveles academicos asociadas del candidato
-@app.route("/agrega_nivel_can/<string:id>/<string:idn>", methods=["POST"])
+@app.route("/agrega_nivel_sol/<string:id>/<string:idn>", methods=["POST"])
 def agrega_nivel_candidato(id, idn):
     if request.method == 'POST':
         aux_pto = request.form['cannv']
@@ -387,7 +494,7 @@ def agrega_nivel_candidato(id, idn):
                                niveles=datos4, idis=datos5, can_habs=datos6, estados=datos7,
                                nivelesC=datos9, carrerasN=datos10)
 ## borra los niveles academicos asociados al candidato
-@app.route("/bo_nivel_can/<string:id>/<string:idn>/<string:idc>")
+@app.route("/bo_nivel_sol/<string:id>/<string:idn>/<string:idc>")
 def bo_nivel_can(id, idn, idc):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
@@ -429,7 +536,7 @@ def bo_nivel_can(id, idn, idc):
                            niveles=datos4, idis=datos5, can_habs=datos6, estados=datos7,
                            nivelesC=datos9, carrerasN=datos10)
 ## elimina al candidato de la base de datos
-@app.route('/bo_candidato/<string:id>')
+@app.route('/bo_solicitante/<string:id>')
 def bo_candidato(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
@@ -453,7 +560,9 @@ def bo_candidato(id):
         conn.close()
         return redirect(url_for('candidato'))
     else:
-        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablar, elimina las relaciones y vuelve a intentarlo"
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+
+
         conn.close()
         return render_template("error.html", error=error,paginaant="/candidato")
 
@@ -525,7 +634,7 @@ def bo_nivel(id):
 
         return redirect(url_for('nivelacademico'))
     else:
-        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablar, elimina las relaciones y vuelve a intentarlo"
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
         conn.close()
         return render_template("error.html", error=error,paginaant="/nivelacademico")
 
@@ -604,7 +713,7 @@ def borrar_habilidad(id):
         return redirect(url_for('sel_habilidades'))
 
     else:
-        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablar, elimina las relaciones y vuelve a intentarlo"
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
         conn.close()
         return render_template("error.html", error=error,paginaant="/habilidad")
 
@@ -679,7 +788,7 @@ def bo_carrera(id):
         return redirect(url_for('carrera'))
 
     else:
-        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablar, elimina las relaciones y vuelve a intentarlo"
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
         conn.close()
         return render_template("error.html", error=error,paginaant="/carrera")
 
@@ -752,7 +861,7 @@ def bo_idioma(id):
         return redirect(url_for("idioma"))
 
     else:
-        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablar, elimina las relaciones y vuelve a intentarlo"
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
         conn.close()
         return render_template("error.html", error=error,paginaant="/idioma")
 
@@ -893,7 +1002,7 @@ def bo_puesto(id):
         conn.close()
         return redirect(url_for('puesto'))
     else:
-        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablar, elimina las relaciones y vuelve a intentarlo"
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
         conn.close()
         return render_template("error.html", error=error,paginaant="/puesto")
 
@@ -1082,7 +1191,7 @@ def borrar_area(id):
         return redirect(url_for("area"))
 
     else:
-        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablar, elimina las relaciones y vuelve a intentarlo"
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
         conn.close()
         return render_template("error.html", error=error,paginaant="/area")
 
@@ -1153,11 +1262,10 @@ def borrar_medio(id):
         conn.close()
         return redirect(url_for("tabla_medio"))
     else:
-        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablar, elimina las relaciones y vuelve a intentarlo"
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
         conn.close()
         return render_template("error.html", error=error,paginaant="/medio_de_publicidad")
 ##########################################################################################################################################################
-
 
 
 ##########################################################catalogo de contacto ###################################################
@@ -1209,9 +1317,13 @@ def ed_contacto(id):
 def modifica_contacto(id):
     if request.method == 'POST':
         descrip = request.form['Nombre']
+        print(descrip)
         domic = request.form['domicilio']
+        print(domic)
         razsoc = request.form['razonsocial']
+        print(razsoc)
         num = request.form['Numero']
+        print(num)
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
         cursor.execute('update contacto set  Nombre=%s,Domicilio=%s,Razon_Social=%s,Telefono=%s where idContacto=%s',
@@ -1233,7 +1345,7 @@ def bo_contacto(id):
         conn.close()
         return redirect(url_for("contacto"))
     else:
-        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablar, elimina las relaciones y vuelve a intentarlo"
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
         conn.close()
         return render_template("error.html", error=error,paginaant="/contacto")
 ##########################################################################################################################################################

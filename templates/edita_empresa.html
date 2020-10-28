@@ -29,7 +29,7 @@
                 <td>
          {% for Telefono in tel %}
         <p><h3>Telefono</h3></p>
-        <input type="tel" rows="3" cols="50" class="form-control" placeholder="Telefono" name="Telefono" id="Telefono" value="{{Telefono.0}}" required>
+        <input type="tel" rows="3" cols="50" class="form-control" placeholder="Telefono" name="Telefono" id="Telefono" value="{{Telefono.0}}" pattern="[0-9]" required>
         {% endfor %}
                 </td>
             </td>
@@ -75,7 +75,7 @@
                 <td>
         {% for Estructura_Juridica in est %}
         <p><h3>Estructura juridica</h3></p>
-        <input type="text" rows="3" cols="50" class="form-control" placeholder="Estructura juridica" name="Estructura_Juridica" id="Estructura_Juridica" value="{{Estructura_Juridica.0}} required">
+        <input type="text" rows="3" cols="50" class="form-control" placeholder="Estructura juridica" name="Estructura_Juridica" id="Estructura_Juridica" required value="{{Estructura_Juridica.0}}">
         {% endfor %}
                 </td>
             </td>
