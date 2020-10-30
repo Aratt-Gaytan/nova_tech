@@ -11,7 +11,6 @@
     crossorigin="anonymous">
     <!---- Liga a CSS local---->
      <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-
 </head>
 <body>
  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -20,18 +19,12 @@
    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="true" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    
-
     </main>
     </div>
     </nav>
-
-
 {% block content %}
 {% endblock %}
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.slim.min.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/popper.min.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js')}}"></script>
-
-
 </body>

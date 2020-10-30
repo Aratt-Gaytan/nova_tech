@@ -11,43 +11,224 @@ def home():
     return render_template("home.html", estatus=estatus)
 
 
+
+
+@app.route("/usuario")
+def usuario():
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Usuario ")
+    perfiles= cursor.fetchall()
+    return render_template("usuario.html",perfiles=perfiles)
+
+
+@app.route("/ed_usuario/<string:id>")
+def ed_usuario(id):
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute('select idusuario from Usuario where idusuario= %s', (id))
+    datos = cursor.fetchall()
+    cursor.execute(
+        'SELECT a.idusuario, a.usuario, a.password, a.nombre, a.idperfil_admo, b.idperfil_admo, b.descripcion from Usuario a, perfil_admo b WHERE a.idperfil_admo = b.idperfil_admo and a.idusuario = %s',
+        (id))
+    datos1 = cursor.fetchall()
+    cursor.execute('select idperfil_admo, descripcion from perfil_admo ')
+    datos3 = cursor.fetchall()
+    return render_template("edi_usuario.html", puestos=datos, pue_habs=datos1,habs=datos3)
+
+
+
+@app.route('/agrega_perfil_usuario', methods=['POST'])
+def agrega_perfil_usuario():
+    if request.method == 'POST':
+        aux_pto = request.form['pto']
+        aux_hab = request.form['habil']
+        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+        cursor = conn.cursor()
+        cursor.execute('update Usuario set idperfil_admo=%s where idusuario=%s',
+                       ( aux_hab,aux_pto))
+        conn.commit()
+
+        cursor.execute('select idusuario from Usuario where idusuario= %s', (aux_pto))
+        datos = cursor.fetchall()
+        cursor.execute(
+            'SELECT a.idusuario, a.usuario, a.password, a.nombre, a.idperfil_admo, b.idperfil_admo, b.descripcion from Usuario a, perfil_admo b WHERE a.idperfil_admo = b.idperfil_admo and a.idusuario = %s',
+            (aux_pto))
+        datos1 = cursor.fetchall()
+        cursor.execute('select idperfil_admo, descripcion from perfil_admo ')
+        datos3 = cursor.fetchall()
+        return render_template("edi_usuario.html", puestos=datos, pue_habs=datos1,habs=datos3)
+
+@app.route('/bo_usuario/<string:id>')
+def bo_usuario(id):
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+
+    cursor.execute('delete from Usuario where idusuario = {0}'.format(id))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('usuario'))
+
+
+@app.route('/modifica_usuario/<string:id>', methods=['POST'])
+def modifica_usuario(id):
+    if request.method == 'POST':
+        aux_des = request.form['descripcion']
+        aux_pass = request.form['password']
+        aux_nom = request.form['nombre']
+        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+        cursor = conn.cursor()
+        cursor.execute(
+            'update Usuario set usuario=%s,password=%s,nombre=%s where idusuario=%s',
+            (aux_des, aux_pass,aux_nom,id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('usuario'))
+
+
+
+
 @app.route("/login")
 def login():
     return render_template("login.html")
 
 
+
 @app.route("/perfil")
-def adminp():
+def perfil():
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM perfi_admo ")
+    cursor.execute("SELECT * FROM perfil_admo ")
     perfiles= cursor.fetchall()
-    return render_template("perfil.html",perfiles=perfiles)
+    return render_template("perfi.html",perfiles=perfiles)
 
-@app.route("/agrega_permisos" , methods=["POST"])
-def agrega_permisos():
-  if request.method == 'POST':
-    nombres = []
+
+@app.route("/ed_perfil/<string:id>")
+def ed_perfil(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute("SELECT Id_proceso FROM proceso ")
-    procesos =  cursor.fetchall()
-    for proceso in procesos:
-        proc = request.form["autorizar"+str(proceso[0])]
-        nombres.extend(proc)
-        print(nombres)
-    cursor.execute("SELECT id_usuario FROM usuario ")
-    usuarios =  cursor.fetchall()
-    cursor.execute("SELECT id_perfil FROM perfil_admo ")
-    perfiles =  cursor.fetchall()
-    for perfil in perfiles:
-        for usuario in usuarios:
-            for nombre in nombres:
-                cursor.execute('insert into perfil_has_proceso  (id_Perfil,id_Proceso,id_permiso) values (%s,%s,%s)', (perfil[0],usuario[0],nombre[0]))
-                conn.commit()
-    conn.close
-    return redirect(url_for('home'))
+    cursor.execute('select idperfil_admo, descripcion'
+                   ' from perfil_admo where idperfil_admo= %s', (id))
+    datos = cursor.fetchall()
+    cursor.execute(
+        'select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion  from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  where a.idperfil_admo=c.idperfil_admo and b.idproceso=c.idproceso and c.idpermisos=d.idpermisos and a.idperfil_admo=%s',
+        (id))
+    datos1 = cursor.fetchall()
+    cursor.execute('select idproceso, desc_proceso from proceso ')
+    datos3 = cursor.fetchall()
+    cursor.execute('select idpermisos, descripcion from permisos ')
+    datos4 = cursor.fetchall()
+    conn.close()
+    return render_template("edi_perfil.html", puestos=datos, pue_habs=datos1,permisos=datos4,habs=datos3)
 
+
+@app.route('/agrega_proceso_perfil', methods=['POST'])
+def agrega_proceso_perfil():
+    if request.method == 'POST':
+        aux_pto = request.form['pto']
+        aux_hab = request.form['habil']
+        aux_exp = request.form['perm']
+        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+        cursor = conn.cursor()
+        cursor.execute('insert into perfil_admo_has_proceso (idperfil_admo, idproceso,idpermisos) values (%s,%s,%s)',
+                       (aux_pto, aux_hab, aux_exp))
+        conn.commit()
+
+        cursor.execute('select idperfil_admo, descripcion'
+                   ' from perfil_admo where idperfil_admo= %s', (aux_pto))
+        datos = cursor.fetchall()
+        cursor.execute(
+            'select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion  from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  where a.idperfil_admo=c.idperfil_admo and b.idproceso=c.idproceso and c.idpermisos=d.idpermisos and a.idperfil_admo=%s',
+            (aux_pto))
+        datos1 = cursor.fetchall()
+        cursor.execute('select idproceso, desc_proceso from proceso ')
+        datos3 = cursor.fetchall()
+        cursor.execute('select idpermisos, descripcion from permisos ')
+        datos4 = cursor.fetchall()
+        conn.close()
+        return render_template("edi_perfil.html", puestos=datos, pue_habs=datos1,permisos=datos4,habs=datos3)
+
+
+@app.route("/bo_pro_pe/<string:id>/<string:idh>/<string:idp>")
+def bo_pro_pre(id, idh,idp):
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute('delete from perfil_admo_has_proceso where idperfil_admo =%s and idpermisos=%s and idproceso = %s', (id, idp,idh))
+    conn.commit()
+
+    cursor.execute('select idperfil_admo, descripcion'
+               ' from perfil_admo where idperfil_admo= %s', (id))
+    datos = cursor.fetchall()
+    cursor.execute(
+        'select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion  from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  where a.idperfil_admo=c.idperfil_admo and b.idproceso=c.idproceso and c.idpermisos=d.idpermisos and a.idperfil_admo=%s',
+        (id))
+    datos1 = cursor.fetchall()
+    cursor.execute('select idproceso, desc_proceso from proceso ')
+    datos3 = cursor.fetchall()
+    cursor.execute('select idpermisos, descripcion from permisos ')
+    datos4 = cursor.fetchall()
+    conn.close()
+    return render_template("edi_perfil.html", puestos=datos, pue_habs=datos1,permisos=datos4,habs=datos3)
+
+@app.route('/modifica_perfil/<string:id>', methods=['POST'])
+def modifica_perfil(id):
+    if request.method == 'POST':
+        aux_des = request.form['descripcion']
+        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+        cursor = conn.cursor()
+        cursor.execute(
+            'update perfil_admo set descripcion=%s where idperfil_admo=%s',
+            (aux_des, id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('perfil'))
+
+
+
+@app.route("/agrega_perfil" , methods=["POST"])
+def agrega_perfil():
+
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+
+    if request.method == 'POST':
+        nombre= request.form["descripcion"]
+        cursor = conn.cursor()
+        cursor.execute("insert into perfil_admo (descripcion) values ( %s ) ",(nombre))
+        conn.commit()
+
+        cursor.execute('select idperfil_admo, descripcion from perfil_admo where idperfil_admo=(select max(idperfil_admo) from perfil_admo)')
+        datos = cursor.fetchall()
+        cursor.execute(
+            'select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion  from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  where a.idperfil_admo=c.idperfil_admo and b.idproceso=c.idproceso and c.idpermisos=d.idpermisos and a.idperfil_admo=(select max(idperfil_admo) from perfil_admo)')
+        datos1 = cursor.fetchall()
+        cursor.execute('select idproceso, desc_proceso from proceso ')
+        datos3 = cursor.fetchall()
+        cursor.execute('select idpermisos, descripcion from permisos ')
+        datos4 = cursor.fetchall()
+        conn.close()
+        return render_template("edi_perfil.html", puestos=datos, pue_habs=datos1,permisos=datos4,habs=datos3)
+@app.route("/nvo_perfil" )
+def nvo_perfil():
+     return render_template("agr_perfil.html")
+
+
+@app.route('/bo_perfil/<string:id>')
+def bo_perfil(id):
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) from perfil_admo_has_proceso WHERE idperfil_admo = %s", (id))
+    ph_pue=cursor.fetchone()
+    cursor.execute("SELECT COUNT(*) from usuario WHERE idperfil_admo= %s", (id))
+    pi_pue=cursor.fetchone()
+    if ph_pue[0] == 0 and pi_pue[0] == 0 :
+        cursor.execute('delete from perfil_admo where idperfil_admo = {0}'.format(id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('perfil'))
+    else:
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error=error,paginaant="/perfil")
 
 
 @app.route("/inicia" , methods=["POST"])
@@ -1698,5 +1879,27 @@ def bo_publicacion(id):
     conn.close()
     return render_template("crea_publicacion.html", sol=dato, publicaciones=datos, contactos=datos1, medios=datos2)
 ###########################################################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
