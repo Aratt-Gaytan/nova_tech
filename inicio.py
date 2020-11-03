@@ -4,11 +4,25 @@ from flask import Flask, render_template, request, url_for, redirect
 ## se crea un app de flask para poder abrir la pagina web
 app = Flask(__name__)
 estatus=0
+usuario = 0
+
 ## se define el home
 @app.route("/")
 def home():
-    global estatus
-    return render_template("home.html", estatus=estatus)
+    global estatus, usuario
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    if usuario == 0:
+
+       return render_template("home.html", estatus=estatus, usuarios='', perfiles = '')
+    else:
+
+        #cursor.execute("SELECT usuario, idperfil_admo FROM Usuario where idusuario = %s ",(usuario))
+        #usuarios=cursor.fetchall()
+        #cursor.execute("SELECT descripcion FROM perfil_admo where idperfil_admo = %s ",(usuarios[0][1]))
+        #perfiles=cursor.fetchall()
+        conn.close()
+        return render_template("home.html", estatus=estatus)#, usuarios=usuarios, perfiles=perfiles)
 
 
 
@@ -61,13 +75,19 @@ def agrega_perfil_usuario():
 
 @app.route('/bo_usuario/<string:id>')
 def bo_usuario(id):
+    global usuario
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
+    if id==usuario:
 
-    cursor.execute('delete from Usuario where idusuario = {0}'.format(id))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('usuario'))
+        error = "no se puede eliminar ese elemento, ya que esta siendo utilizado"
+        conn.close()
+        return render_template("error.html", error=error,paginaant="/usuario")
+    else:
+        cursor.execute('delete from Usuario where idusuario = {0}'.format(id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('usuario'))
 
 
 @app.route('/modifica_usuario/<string:id>', methods=['POST'])
@@ -218,7 +238,7 @@ def bo_perfil(id):
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) from perfil_admo_has_proceso WHERE idperfil_admo = %s", (id))
     ph_pue=cursor.fetchone()
-    cursor.execute("SELECT COUNT(*) from usuario WHERE idperfil_admo= %s", (id))
+    cursor.execute("SELECT COUNT(*) from Usuario WHERE idperfil_admo= %s", (id))
     pi_pue=cursor.fetchone()
     if ph_pue[0] == 0 and pi_pue[0] == 0 :
         cursor.execute('delete from perfil_admo where idperfil_admo = {0}'.format(id))
@@ -233,7 +253,7 @@ def bo_perfil(id):
 
 @app.route("/inicia" , methods=["POST"])
 def inicia():
-    global estatus
+    global estatus,usuario,perfil
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
 
     if request.method == 'POST':
@@ -252,13 +272,16 @@ def inicia():
 
                 print("Bienvenido: " )
                 estatus=1
+                usuario = dato[0]
+
                 return redirect(url_for('home'))
         print("No ingreso")
         return render_template("login.html")
 @app.route("/logout")
 def logout():
-    global estatus
+    global estatus,usuario
     estatus=0
+    usuario = 0
     return redirect(url_for('home'))
 
 @app.route("/registro")
@@ -280,10 +303,19 @@ def registrar():
         nombre= request.form["nombre"]
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('insert into Usuario (usuario,Password,Nombre) values (%s,%s,%s)', (usu,passw,nombre))
+        cursor.execute('insert into Usuario (usuario,Password,Nombre, idperfil_admo) values (%s,%s,%s,2)', (usu,passw,nombre))
         conn.commit()
+
+        cursor.execute('select idusuario,usuario,Password,Nombre from Usuario where idusuario= (select max(idusuario) from Usuario) ')
+        datos = cursor.fetchall()
+        print(datos)
+        cursor.execute(
+            'SELECT a.idusuario, a.usuario, a.password, a.nombre, a.idperfil_admo, b.idperfil_admo, b.descripcion from Usuario a, perfil_admo b WHERE a.idperfil_admo = b.idperfil_admo and a.idusuario = (select max(idusuario) from Usuario)',)
+        datos1 = cursor.fetchall()
+        cursor.execute('select idperfil_admo, descripcion from perfil_admo ')
+        datos3 = cursor.fetchall()
         conn.close()
-    return redirect(url_for('home'))
+        return render_template("edi_usuario.html", puestos=datos, pue_habs=datos1,habs=datos3)
 
 
 
@@ -1879,27 +1911,4 @@ def bo_publicacion(id):
     conn.close()
     return render_template("crea_publicacion.html", sol=dato, publicaciones=datos, contactos=datos1, medios=datos2)
 ###########################################################################################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
