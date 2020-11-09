@@ -1,28 +1,153 @@
 # importamos la libreria pymysql para conectar con la base de datos y flask un framework para poder interactuar con los html y crearla pagina web
 import pymysql
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, g,render_template, request, url_for, redirect,flash, session
+import  os
+from werkzeug.utils import secure_filename
 ## se crea un app de flask para poder abrir la pagina web
 app = Flask(__name__)
+app.secret_key = "MySecretKey1234"
 estatus=0
 usuario = 0
 
-## se define el home
+class user:
+    def __init__(self, id, username, password, id_funcion, funcion):
+        self.id = id
+        self.username = username
+        self.password = password
+        self.id_funcion = id_funcion
+        self.funcion = funcion
+    def __repr__(self):
+        return '<User:{self.username}>'
+
+users=[]
+
+
+
+@app.before_request
+def before_request():
+    global estatus
+    if "user_id" in session:
+        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+        cursor = conn.cursor()
+        cursor.execute('''SELECT a.idusuario, a.usuario, a.password, a.nombre, b.idperfil_admo, b.descripcion from Usuario a, perfil_admo b WHERE a.idperfil_admo = b.idperfil_admo  and a.idusuario=%s''',(session["user_id"]))
+        dato = cursor.fetchone()
+        print(dato)
+        users.clear()
+        users.append(user(id=dato[0],username=dato[1],password=dato[2], id_funcion=dato[4], funcion=dato[5]))
+        g.user=users[0]
+    else:
+        if estatus == 1:
+            pass
+        else:
+            estatus =1
+            return redirect(url_for('login'))
+
 @app.route("/")
+def home2():
+    return render_template("login.html")
+
+
+## se define el home
+@app.route("/home")
 def home():
-    global estatus, usuario
+    return render_template("home.html")#, usuarios=usuarios, perfiles=perfiles)
+
+
+
+
+
+@app.route("/login")
+def login():
+    global estatus
+    estatus=1
+    return render_template("login.html")
+
+
+
+
+
+
+@app.route("/inicio" , methods=["POST"])
+def inicio():
+    session.pop("user_id",None)
+    global estatus,usuario,perfil
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+
+    if request.method == 'POST':
+        nombre= request.form["txtusuario"]
+        passw= request.form["txtpassword"]
+        print(passw)
+        print(nombre)
+        cursor = conn.cursor()
+        cursor.execute("SELECT idusuario, usuario,password FROM Usuario ")#WHERE usuarios = '%s' and Password = '$s' ",(nombre,passw))
+        datos= cursor.fetchall()
+        print(datos)
+        conn.close()
+        #nr =  mysqli_num_rows(datos)
+        for dato in datos:
+            if dato[1]==nombre and dato[2]==passw:
+
+                print("Bienvenido: " )
+                session["user_id"] = dato[0]
+                estatus=1
+                usuario = dato[0]
+
+                return redirect(url_for('home'))
+        print("No ingreso")
+        return render_template("login.html")
+@app.route("/logout")
+def logout():
+    global estatus,usuario
+
+    estatus=0
+    session.pop('user_id',None)
+    return redirect(url_for('home2'))
+
+@app.route("/registro")
+def registro():
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    if usuario == 0:
+    cursor.execute("SELECT * FROM perfil_admo ")
+    perfiles =  cursor.fetchall()
+    print (perfiles)
+    return render_template("registro.html", perfiles= perfiles)
 
-       return render_template("home.html", estatus=estatus, usuarios='', perfiles = '')
-    else:
 
-        #cursor.execute("SELECT usuario, idperfil_admo FROM Usuario where idusuario = %s ",(usuario))
-        #usuarios=cursor.fetchall()
-        #cursor.execute("SELECT descripcion FROM perfil_admo where idperfil_admo = %s ",(usuarios[0][1]))
-        #perfiles=cursor.fetchall()
+
+@app.route("/registrar",methods=["POST"])
+def registrar():
+    if request.method == 'POST':
+        usu= request.form["user"]
+        passw= request.form["password"]
+        nombre= request.form["nombre"]
+        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+        cursor = conn.cursor()
+        cursor.execute('insert into Usuario (usuario,Password,Nombre, idperfil_admo) values (%s,%s,%s,2)', (usu,passw,nombre))
+        conn.commit()
+
+        cursor.execute('select idusuario,usuario,Password,Nombre from Usuario where idusuario= (select max(idusuario) from Usuario) ')
+        datos = cursor.fetchall()
+        print(datos)
+        cursor.execute(
+            'SELECT a.idusuario, a.usuario, a.password, a.nombre, a.idperfil_admo, b.idperfil_admo, b.descripcion from Usuario a, perfil_admo b WHERE a.idperfil_admo = b.idperfil_admo and a.idusuario = (select max(idusuario) from Usuario)',)
+        datos1 = cursor.fetchall()
+        cursor.execute('select idperfil_admo, descripcion from perfil_admo ')
+        datos3 = cursor.fetchall()
         conn.close()
-        return render_template("home.html", estatus=estatus)#, usuarios=usuarios, perfiles=perfiles)
+        return render_template("edi_usuario.html", puestos=datos, pue_habs=datos1,habs=datos3)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -107,10 +232,6 @@ def modifica_usuario(id):
 
 
 
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
 
 
 
@@ -250,72 +371,6 @@ def bo_perfil(id):
         conn.close()
         return render_template("error.html", error=error,paginaant="/perfil")
 
-
-@app.route("/inicia" , methods=["POST"])
-def inicia():
-    global estatus,usuario,perfil
-    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
-
-    if request.method == 'POST':
-        nombre= request.form["txtusuario"]
-        passw= request.form["txtpassword"]
-        print(passw)
-        print(nombre)
-        cursor = conn.cursor()
-        cursor.execute("SELECT idusuario, usuario,password FROM Usuario ")#WHERE usuarios = '%s' and Password = '$s' ",(nombre,passw))
-        datos= cursor.fetchall()
-        print(datos)
-        conn.close()
-        #nr =  mysqli_num_rows(datos)
-        for dato in datos:
-            if dato[1]==nombre and dato[2]==passw:
-
-                print("Bienvenido: " )
-                estatus=1
-                usuario = dato[0]
-
-                return redirect(url_for('home'))
-        print("No ingreso")
-        return render_template("login.html")
-@app.route("/logout")
-def logout():
-    global estatus,usuario
-    estatus=0
-    usuario = 0
-    return redirect(url_for('home'))
-
-@app.route("/registro")
-def registro():
-    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM perfil_admo ")
-    perfiles =  cursor.fetchall()
-    print (perfiles)
-    return render_template("registro.html", perfiles= perfiles)
-
-
-
-@app.route("/registrar",methods=["POST"])
-def registrar():
-    if request.method == 'POST':
-        usu= request.form["user"]
-        passw= request.form["password"]
-        nombre= request.form["nombre"]
-        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
-        cursor = conn.cursor()
-        cursor.execute('insert into Usuario (usuario,Password,Nombre, idperfil_admo) values (%s,%s,%s,2)', (usu,passw,nombre))
-        conn.commit()
-
-        cursor.execute('select idusuario,usuario,Password,Nombre from Usuario where idusuario= (select max(idusuario) from Usuario) ')
-        datos = cursor.fetchall()
-        print(datos)
-        cursor.execute(
-            'SELECT a.idusuario, a.usuario, a.password, a.nombre, a.idperfil_admo, b.idperfil_admo, b.descripcion from Usuario a, perfil_admo b WHERE a.idperfil_admo = b.idperfil_admo and a.idusuario = (select max(idusuario) from Usuario)',)
-        datos1 = cursor.fetchall()
-        cursor.execute('select idperfil_admo, descripcion from perfil_admo ')
-        datos3 = cursor.fetchall()
-        conn.close()
-        return render_template("edi_usuario.html", puestos=datos, pue_habs=datos1,habs=datos3)
 
 
 
@@ -1911,4 +1966,6 @@ def bo_publicacion(id):
     conn.close()
     return render_template("crea_publicacion.html", sol=dato, publicaciones=datos, contactos=datos1, medios=datos2)
 ###########################################################################################################################################################
+
+
 
