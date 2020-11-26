@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<center><h3>Solicitud</h3></center>
+<br>
+<table width="100%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+              <thead>
+                <tr>
+                   <td style="color:#FFFFFF" bgcolor="262626">Area</td>
+                  <td style="color:#FFFFFF" bgcolor="262626">Puesto</td>
+                  <td style="color:#FFFFFF" bgcolor="262626">Carrera</td>
+                  <td style="color:#FFFFFF" bgcolor="262626" >Nivel academico</td>
+                  <td style="color:#FFFFFF" bgcolor="262626">Fecha de solicitud</td>
+                  <td style="color:#FFFFFF" bgcolor="262626">Vacantes</td>
+          <td style="color:#FFFFFF" bgcolor="262626" >Estatus</td>
+
+         
+                </tr>
+              </thead>
+              <tbody>
+                {% for dato in solicitud %}
+                  <tr>
+                    <td>
+                      {{ dato.4 }}
+                    </td>
+                       <td>
+                      {{ dato.6 }}
+                    </td>
+                     <td>
+                      {{ dato.10 }}
+                    </td>
+                       <td>
+                      {{ dato.8 }}
+                    </td>
+                       <td>
+                      {{ dato.1 }}
+                    </td>
+                    <td>
+                      {{ dato.2 }}
+                    </td>
+                     <td>
+                      {{ dato.12 }}
+                    </td>
+                  
+                   
+                
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+
+
+
+
+
+
+ <form action="/califica_psico/{{ idSolicitud }}/{{ can_selec.0[0] }}" method="post">
+    <center><h4>Agregar calificacion psicologica</h4></center>
+    <div class="form-group col-md">
+                      <label for="candidato">Candidato</label>
+                      <select name="candidato" id="candidato" class="form-control" required="">
+                            <option value="" selected="">Choose...</option>
+                         {% for candidato in can_selec %}
+                            <option value="{{candidato.0}}">{{candidato.0}}</option>
+                              
+                          {% endfor %}
+                              </select>
+                              <br>
+    <label for="ci">CI</label>
+              <input type="text" class="form-control" name="ci" id="ci" placeholder="Coeficiente intelectual"  required="" style="WIDTH: 220px;"">
+  </div>
+  <div class="form-group col-md-2">
+          <label for="analisis">Analisis</label>
+              <input type="text" class="form-control" name="analisis" id="analisis" placeholder="Analisis psicologico" style="WIDTH: 1320px; HEIGHT: 110px" required="">
+  </div>
+
+  <div class="form-row">
+        <label>Es apto:</label>&nbsp;
+        <div class="form-check rorm-check-inline">
+            <input class="form-check-input" type="radio" name="apto" id="apto1" value="0" checked="" required="">
+            <label class="form-check-label" for="apto1">Si</label >
+        </div>
+        &nbsp;&nbsp;&nbsp;
+        <div class="form-check rorm-check-inline">
+            <input class="form-check-input" type="radio" name="apto" id="apto2" value="1">
+            <label class="form-check-label" for="apto2">No</label>
+        </div>
+    </div>
+  <br>
+<button type="submit" class="btn btn-primary" >Agregar</button>
+
+
+
+</form>
+
+{% endblock %}
