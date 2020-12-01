@@ -324,7 +324,6 @@ def modifica_perfil(id):
 
 @app.route("/agrega_perfil" , methods=["POST"])
 def agrega_perfil():
-
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
 
     if request.method == 'POST':
@@ -2154,6 +2153,28 @@ def califpsicologica(id):
     datos3 = cursor.fetchall()
     conn.close()
     return render_template("calif_psico.html", candidatos=datos, can_selec=datos2, idSolicitud=id,solicitud=datos3)
+
+@app.route("/calificacion_p/<string:ca>/<string:so>")
+def calificacion_p(ca,so):
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute('''select a.Curp, a.Nombre, c.idNivelAcademico, c.descripcion, d.descripcion from
+        candidato a, candidato_has_nivelacademico b, nivelacademico c, carrera d
+        where b.curp = a.curp and c.idNivelAcademico = b.idNivelAcademico and d.idCarrera = b.idCarrera and
+        NOT EXISTS (SELECT NULL FROM resultadocandidato e WHERE e.Curp = a.Curp and e.idSolicitud=%s) ''',(so))
+    datos = cursor.fetchall()
+    cursor.execute('''select a.Curp, b.Nombre, c.idNivelAcademico, c.idCarrera, d.descripcion, e.descripcion, a.apto,a.Personalidad,a.CoeficienteIntelectual
+        from resultadocandidato a,candidato b, candidato_has_nivelacademico c, nivelacademico d, carrera e where b.curp = a.curp
+        and b.curp=%s and d.idNivelAcademico = c.idNivelAcademico and e.idcarrera = c.idcarrera and a.idSolicitud=%s''', (ca,so))
+    datos2 = cursor.fetchall()
+    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
+        from solicitud a, area b, puesto c, nivelacademico d , carrera e, estatus_solicitud f where b.idArea=a.idArea
+        and c.idPuesto=a.idPuesto and d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud and a.idCarrera=e.idCarrera
+        and (a.idEstatus_solicitud = 3 or a.idEstatus_solicitud = 4) and a.idSolicitud=%s order by a.idEstatus_Solicitud ''',(so))
+    datos3 = cursor.fetchall()
+    conn.close()
+
+    return render_template("Calificacion_p.html", candidatos=datos, can_selec=datos2, idSolicitud=id,solicitud=datos3)
 @app.route("/califica_psico/<string:so>/<string:ca>", methods=["POST"])
 def califica_psico(so,ca):
      if request.method == 'POST':
@@ -2167,3 +2188,147 @@ def califica_psico(so,ca):
         conn.commit()
         conn.close()
         return redirect(url_for("calificacionpsicologica"))
+
+
+
+@app.route("/calificacion_tecnica")
+def calificaciontecnica():
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,
+        a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
+        from solicitud a, area b, puesto c, nivelacademico d , carrera e, estatus_solicitud f where b.idArea=a.idArea
+        and c.idPuesto=a.idPuesto and d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud
+        and a.idCarrera=e.idCarrera and (a.idEstatus_solicitud = 3 or a.idEstatus_solicitud = 4)
+        and EXISTS (SELECT NULL from resultadocandidato g WHERE g.idSolicitud = a.idSolicitud) ''')
+    datos = cursor.fetchall()
+    #print(datos)
+    conn.close()
+    return render_template("califica_tecnica.html",datos=datos)
+
+
+
+@app.route("/sel_calif_tecnica/<string:id>")
+def sel_calif_tecnica(id):
+
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+
+    cursor.execute('''select a.Curp, a.Nombre, c.idNivelAcademico, c.descripcion, d.descripcion from
+        candidato a, candidato_has_nivelacademico b, nivelacademico c, carrera d
+        where b.curp = a.curp and c.idNivelAcademico = b.idNivelAcademico and d.idCarrera = b.idCarrera and
+     NOT EXISTS (SELECT NULL FROM resultadocandidato e WHERE e.Curp = a.Curp and e.idSolicitud=%s) ''',(id))
+    datos = cursor.fetchall()
+
+    cursor.execute('''select a.Curp, b.Nombre, c.idNivelAcademico, c.idCarrera, d.descripcion, e.descripcion
+        from resultadocandidato a,candidato b, candidato_has_nivelacademico c, nivelacademico d, carrera e where b.curp = a.curp
+        and c.curp = b.curp and d.idNivelAcademico = c.idNivelAcademico and e.idcarrera = c.idcarrera and a.idSolicitud=%s''', (id))
+    datos2 = cursor.fetchall()
+
+    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
+        from solicitud a, area b, puesto c, nivelacademico d , carrera e, estatus_solicitud f where b.idArea=a.idArea
+        and c.idPuesto=a.idPuesto and d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud and a.idCarrera=e.idCarrera
+        and (a.idEstatus_solicitud = 3 or a.idEstatus_solicitud = 4) and a.idSolicitud=%s order by a.idEstatus_Solicitud ''',(id))
+    datos4 = cursor.fetchall()
+
+    conn.close()
+    return render_template("calif_tecnica.html", candidatos=datos,can_selec=datos2,idSolicitud=id,solicitud=datos4 )
+
+
+
+@app.route("/calif_solicitante_tecnica/<string:id>/<string:soli>")
+def calif_solicitante_tecnica(id,soli):
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute(
+        ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
+        (id))
+    datos = cursor.fetchall()
+    print(datos)
+    cursor.execute(' select * from habilidad ')
+    datos1 = cursor.fetchall()
+    cursor.execute(' select * from idioma ')
+    datos2 = cursor.fetchall()
+
+    cursor.execute(' select * from nivelacademico ')
+    datos4 = cursor.fetchall()
+    cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel '
+                   'from candidato a, idioma b,candidato_has_idioma c '
+                   'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (id))
+    datos5 = cursor.fetchall()
+    cursor.execute('select a.CURP, b.idHabilidad,b.Descripcion,c.CURP, c.idHabilidad, c.Experiencia '
+                   'from candidato a, habilidad b,candidato_has_habilidad c '
+                   'where a.CURP=c.CURP and b.idHabilidad=c.idHabilidad and a.CURP=%s ', (id))
+    datos6 = cursor.fetchall()
+    cursor.execute('select * from estadocivil order by Descripcion')
+    datos7 = cursor.fetchall()
+
+    cursor.execute(
+        'select a.CURP, b.idNivelAcademico,b.Descripcion,c.Institucion,c.CURP, c.idNivelAcademico,c.idCarrera ,d.Descripcion '
+        'from candidato a, nivelacademico b,candidato_has_nivelacademico c, carrera d '
+        ' where a.CURP=c.CURP and b.idNivelAcademico=c.idNivelacademico and c.idCarrera = d.idCarrera and a.CURP=%s ',
+        (id))
+    datos9 = cursor.fetchall()
+    cursor.execute('select * from carrera order by Descripcion')
+    datos10 = cursor.fetchall()
+    conn.close()
+    return render_template("calif_tec.html", datos=datos, habs=datos1, idiomas=datos2,
+                           niveles=datos4, idis=datos5, can_habs=datos6, estados=datos7,
+                           nivelesC=datos9, carrerasN=datos10,idSolicitud=soli)
+
+
+@app.route("/califica_tecnica_sol/<string:id>", methods=["POST"])
+def califica_tecnica_sol(id):
+     if request.method == 'POST':
+        aux_habil = request.form['calificahabil']
+        aux_idio = request.form['calificaidio']
+        aux_nivel = request.form['calificanivel']
+        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+        cursor = conn.cursor()
+        cursor.execute('''UPDATE resultadocandidato SET Personalidad = %s, CoeficienteIntelectual = %s, apto = %s
+            WHERE resultadocandidato.idSolicitud = %s AND resultadocandidato.Curp = %s;''', (aux_person,aux_ci,aux_apto,so,ca))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("calificacionpsicologica"))
+
+
+@app.route("/calificacion_medica")
+def calificacion_medica():
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
+        from solicitud a, area b, puesto c, nivelacademico d , carrera e,  estatus_solicitud f
+        where b.idArea=a.idArea and c.idPuesto=a.idPuesto and d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud and a.idCarrera=e.idCarrera and (a.idEstatus_solicitud = 3 or a.idEstatus_solicitud = 4) order by a.idEstatus_Solicitud ''')
+    datos = cursor.fetchall()
+    #print(datos)
+    conn.close()
+    return render_template('Calificacion_medica.html', datos=datos)
+
+
+@app.route("/calif_medica/<string:id>")
+def calif_medica(id):
+
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor = conn.cursor()
+
+    cursor.execute('''select a.Curp, a.Nombre, c.idNivelAcademico, c.descripcion, d.descripcion from
+        candidato a, candidato_has_nivelacademico b, nivelacademico c, carrera d
+        where b.curp = a.curp and c.idNivelAcademico = b.idNivelAcademico and d.idCarrera = b.idCarrera and
+     NOT EXISTS (SELECT NULL FROM resultadocandidato e WHERE e.Curp = a.Curp and e.idSolicitud=%s) ''',(id))
+    datos = cursor.fetchall()
+
+    cursor.execute('''select a.Curp, b.Nombre, c.idNivelAcademico, c.idCarrera, d.descripcion, e.descripcion
+        from resultadocandidato a,candidato b, candidato_has_nivelacademico c, nivelacademico d, carrera e where b.curp = a.curp
+        and c.curp = b.curp and d.idNivelAcademico = c.idNivelAcademico and e.idcarrera = c.idcarrera and a.idSolicitud=%s''', (id))
+    datos2 = cursor.fetchall()
+
+    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
+        from solicitud a, area b, puesto c, nivelacademico d , carrera e, estatus_solicitud f where b.idArea=a.idArea
+        and c.idPuesto=a.idPuesto and d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud and a.idCarrera=e.idCarrera
+        and (a.idEstatus_solicitud = 3 or a.idEstatus_solicitud = 4) and a.idSolicitud=%s order by a.idEstatus_Solicitud ''',(id))
+    datos4 = cursor.fetchall()
+
+    conn.close()
+    return render_template("calif_medica.html", candidatos=datos,can_selec=datos2,idSolicitud=id,solicitud=datos4 )
+
+

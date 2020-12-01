@@ -1,10 +1,10 @@
-{% extends "layout.html" %}
-{% block content %}
 
+        {% extends "layout.html" %}
+{% block content %}
 
 <center><h3>Solicitud</h3></center>
 <br>
-    <table width="100%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+<table width="100%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
               <thead>
                 <tr>
                    <td style="color:#FFFFFF" bgcolor="262626">Area</td>
@@ -14,6 +14,8 @@
                   <td style="color:#FFFFFF" bgcolor="262626">Fecha de solicitud</td>
                   <td style="color:#FFFFFF" bgcolor="262626">Vacantes</td>
           <td style="color:#FFFFFF" bgcolor="262626" >Estatus</td>
+
+         
                 </tr>
               </thead>
               <tbody>
@@ -40,26 +42,32 @@
                      <td>
                       {{ dato.12 }}
                     </td>
+                  
+                   
+                
                   </tr>
                 {% endfor %}
               </tbody>
-    </table>
-    <br>
-    <br>
-    <center><h3>Solicitantes seleccionados</h3></center>
-       <br>
-       <table width="100%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
-          <thead>
+            </table>
 
-            <tr>
-              <td style="color:#FFFFFF" bgcolor="262626">CURP</td>
-              <td style="color:#FFFFFF" bgcolor="262626">Nombre</td>
-              <td style="color:#FFFFFF" bgcolor="262626">Nivel Academico</td>
-              <td style="color:#FFFFFF" bgcolor="262626">Carrera</td>
-              <td style="color:#FFFFFF" bgcolor="262626"></td>
-            </tr>
-          </thead>
-           <tbody>
+
+           <br>
+           <center><h3>Solicitantes seleccionados</h3></center>
+           <br>
+           <table width="100%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+              <thead>
+
+                <tr>
+                  <td style="color:#FFFFFF" bgcolor="262626">CURP</td>
+                  <td style="color:#FFFFFF" bgcolor="262626">Nombre</td>
+                  <td style="color:#FFFFFF" bgcolor="262626">Nivel Academico</td>
+                  <td style="color:#FFFFFF" bgcolor="262626">Carrera</td>
+                  <td style="color:#FFFFFF" bgcolor="262626"></td>
+                  <td style="color:#FFFFFF" bgcolor="262626"></td>
+
+                </tr>
+              </thead>
+              <tbody>
                 {% for candidato in can_selec %}
                   <tr>
                     <td>
@@ -74,12 +82,21 @@
                     <td>
                       {{ candidato.5 }}
                     </td>
-                    <td bgcolor="#00C56C" width="60">
-                      <center><a href="/calificacion_p/{{ can_selec.0[0] }}/{{ solicitud.0[0] }}" style="color:#FFFFFF;">Calificar</a></center>
+                    <td  bgcolor="#00C56C" width="60">
+                      <center><a href="/calif_solicitante_tecnica/{{candidato.0}}/{{idSolicitud}}" style="color:#FFFFFF;">Calificar</a></center>
                     </td>
+
                   </tr>
                 {% endfor %}
-           </tbody>
-       </table>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+    
 
+           <br>
+            <br>
+        <center><a href="/calificacion_tecnica" class="btn btn-primary">Regresar a las solicitudes</a></center>
+
+<!----->
 {% endblock %}
