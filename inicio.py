@@ -2174,13 +2174,17 @@ def calificacion_p(ca,so):
     datos3 = cursor.fetchall()
     conn.close()
 
-    return render_template("Calificacion_p.html", candidatos=datos, can_selec=datos2, idSolicitud=id,solicitud=datos3)
+    return render_template("Calificacion_p.html", candidatos=datos, can_selec=datos2, idSolicitud=so,solicitud=datos3)
 @app.route("/califica_psico/<string:so>/<string:ca>", methods=["POST"])
 def califica_psico(so,ca):
      if request.method == 'POST':
         aux_ci = request.form['ci']
+        print(aux_ci)
         aux_person = request.form['analisis']
+        print(aux_person)
         aux_apto = request.form['apto']
+        print(aux_apto)
+        print(ca)
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
         cursor.execute('''UPDATE resultadocandidato SET Personalidad = %s, CoeficienteIntelectual = %s, apto = %s
@@ -2332,3 +2336,5 @@ def calif_medica(id):
     return render_template("calif_medica.html", candidatos=datos,can_selec=datos2,idSolicitud=id,solicitud=datos4 )
 
 
+# if __name__ == "__main__":
+#     app.run(port=3000, debug=True)
