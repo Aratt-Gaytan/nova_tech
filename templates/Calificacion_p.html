@@ -49,7 +49,11 @@
                   <label for="analisis">Analisis</label>
                       <input type="text" class="form-control" name="analisis" id="analisis" placeholder="Analisis psicologico" value="{{ can_selec.0[7] }}" style="WIDTH: 1320px; HEIGHT: 110px" required>
           </div>
+ <div class="form-group col-md-2">
+                     <label for="calificaion">Califica el perfil</label>
+                    <input type="text" class="form-control" name="calificaion" id="calificaion" value="{{can_selec.0[9]}}"  required>
 
+                    </div>
           <div class="form-row">
                 <label>Es apto:</label>&nbsp;
                 {% if can_selec.0[8] == 0 %}

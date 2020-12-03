@@ -64,23 +64,20 @@
 
 
                     </select>
-
-                    </div>
+              
+                  </div>
+                   
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-
+                       </div>
+                       </div>
                    </div>
-                   </div>
-              </div>
-
+                
+               
 <br>
-<br>
-
-
 
 <!-- -----------------------------------------------------------------  -->
             <br>
-             <form action=""><!--/califica_tecnica_sol/{{ datos.0[0] }}/{{ idSolicitud }}" method="post"-->
+
             <center><h3>Habilidades obtenidas</h3></center>
 
                   <br>
@@ -93,6 +90,7 @@
                               <td style="color:white;" bgcolor="black">Experiencia</td>
  <td style="color:white;" bgcolor="black">Es Apto?</td>
  <td style="color:white;" bgcolor="black"></td>
+ <td style="color:white;" bgcolor="black"></td>
                             </tr>
                           </thead>
                           <tbody>
@@ -104,11 +102,20 @@
                                 <td>
                                   {{ dato.5 }}
                                 </td>
+                                {% if dato.6 == 0%}
+                                <td width="100">
+                                 NO
+                                </td>
+                                {%else%}
+                                <td width="100">
+                                 SI
+                                </td>
+                                {%endif%}
                                 <td  bgcolor="#129OC2" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">Si</a></center>
+                                    <center><a href="/cali_tec/hab/{{dato.1}}/{{dato.0}}/1/{{ idSolicitud }}" style="color:#FFFFFF;">Si</a></center>
                                 </td>
                                 <td  bgcolor="#00C56C" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">NO</a></center>
+                                    <center><a href="/cali_tec/hab/{{dato.1}}/{{dato.0}}/0/{{ idSolicitud }}" style="color:#FFFFFF;">NO</a></center>
                                 </td>
                       </div>
 </td>
@@ -136,6 +143,7 @@
                               <td style="color:white;" bgcolor="black">Nivel</td>
                               <td style="color:white;" bgcolor="black">Es Apto?</td>
                               <td style="color:white;" bgcolor="black"></td>
+                              <td style="color:white;" bgcolor="black"></td>
 
 
                                 </td>
@@ -150,11 +158,20 @@
                                 <td>
                                   {{ idi.5 }}
                                 </td>
+                                {% if idi.6 == 0%}
+                                <td width="100">
+                                 NO
+                                </td>
+                                {%else%}
+                                <td width="100">
+                                 SI
+                                </td>
+                                {%endif%}
                                 <td  bgcolor="#129OC2" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">Si</a></center>
+                                    <center><a href="/cali_tec/idio/{{idi.1}}/{{idi.0}}/1/{{ idSolicitud }}" style="color:#FFFFFF;">Si</a></center>
                                 </td>
                                 <td  bgcolor="#00C56C" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">NO</a></center>
+                                    <center><a href="/cali_tec/idio/{{idi.1}}/{{idi.0}}/0/{{ idSolicitud }}"style="color:#FFFFFF;">NO</a></center>
                                 </td>
                       </div>
                     </td>
@@ -180,6 +197,7 @@
 
                                 <td style="color:white;" bgcolor="black">Es Apto?</td>
                                 <td style="color:white;" bgcolor="black"></td>
+                                <td style="color:white;" bgcolor="black"></td>
 
 
                             </tr>
@@ -196,11 +214,20 @@
                                    <td>
                                   {{ funcionC.3 }}
                                 </td>
+                                 {% if funcionC.8 == 0%}
+                                <td width="100">
+                                 NO
+                                </td>
+                                {%else%}
+                                <td width="100">
+                                 SI
+                                </td>
+                                {%endif%}
                                 <td  bgcolor="#129OC2" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">Si</a></center>
+                                    <center><a href="/cali_tec/niv/{{funcionC.1}}/{{funcionC.0}}/1/{{ idSolicitud }}" style="color:#FFFFFF;">Si</a></center>
                                 </td>
                                 <td  bgcolor="#00C56C" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">NO</a></center>
+                                    <center><a href="/cali_tec/niv/{{funcionC.1}}/{{funcionC.0}}/0/{{ idSolicitud }}" style="color:#FFFFFF;">NO</a></center>
                                 </td>
 
                               </tr>
@@ -213,7 +240,7 @@
             </div>
               <br>
         <br>
-        <center><button class="btn btn-primary">Califica</button></center>
-      </form>
+  <center><a href="/calificacion_tecnica" class="btn btn-primary">Regresar a las solicitudes</a></center>
+
 
 {% endblock %}
