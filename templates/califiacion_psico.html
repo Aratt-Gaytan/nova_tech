@@ -20,7 +20,7 @@
                 </tr>
               </thead>
               <tbody>
-       
+
                 {% for dato in datos %}
                   <tr>
                     <td>
@@ -32,18 +32,18 @@
                      <td>
                       {{ dato.1 }}
                     </td>
-                      
+
                      <td>
                       {{ dato.12 }}
                     </td>
-                  
-                   <td bgcolor="#129OC2" width="60">
+
+                   <td bgcolor="#129OC2" width="100">
                       <center><a  style="color:#FFFFFF;" href="/calif_psicologica/{{dato.0}}" >calificacion psicologica</a></center>
                     </td>
-                    <td  bgcolor="#00C56C"  width="60">
+                    <td  bgcolor="#00C56C"  width="100">
                       <center><a  style="color:#FFFFFF;" href="/termina_solicitud/{{dato.0}}" >Terminar</a></center>
                     </td>
-                
+
                   </tr>
                 {% endfor %}
               </tbody>

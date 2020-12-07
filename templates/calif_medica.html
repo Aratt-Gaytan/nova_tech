@@ -83,14 +83,20 @@
                     <td>
                       {{ candidato.5 }}
                     </td>
+                    {% if candidato.6 == 0 %}
                     <td>
-                      Pendiente
+                      No es apto
                     </td>
-                    <td  bgcolor="#129OC2" width="60">
-                      <center><a href="" style="color:#FFFFFF;">Es apto</a></center>
+                    {% else %}
+                    <td>
+                      Es apto
                     </td>
-                    <td  bgcolor="#00C56C" width="60">
-                      <center><a href="" style="color:#FFFFFF;">No es apto</a></center>
+                    {% endif %}
+                    <td  bgcolor="#129OC2" width="80">
+                      <center><a href="/cal_medica/{{ idSolicitud }}/{{ candidato.0 }}/1" style="color:#FFFFFF;">Es apto</a></center>
+                    </td>
+                    <td  bgcolor="#00C56C" width="80">
+                      <center><a href="/cal_medica/{{ idSolicitud }}/{{ candidato.0 }}/0" style="color:#FFFFFF;">No es apto</a></center>
                     </td>
 
                   </tr>
