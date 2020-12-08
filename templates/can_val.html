@@ -1,6 +1,4 @@
-
-
-        {% extends "layout.html" %}
+{% extends "layout.html" %}
 {% block content %}
 
 <center><h3>Solicitud</h3></center>
@@ -14,7 +12,7 @@
                   <td style="color:#FFFFFF" bgcolor="262626" >Nivel academico</td>
                   <td style="color:#FFFFFF" bgcolor="262626">Fecha de solicitud</td>
                   <td style="color:#FFFFFF" bgcolor="262626">Vacantes</td>
-          <td style="color:#FFFFFF" bgcolor="262626" >Estatus</td>
+                  <td style="color:#FFFFFF" bgcolor="262626" >Estatus</td>
 
 
                 </tr>
@@ -93,10 +91,10 @@
                       No
                     </td>
                     {% endif %}
-                    <td  bgcolor="#129OC2" width="100">
+                    <td  bgcolor="#129OC2" width="60">
                       <center><a href="/val/{{ idSolicitud }}/{{ candidato.0 }}/1" style="color:#FFFFFF;">Validado</a></center>
                     </td>
-                    <td  bgcolor="#00C56C" width="100">
+                    <td  bgcolor="#00C56C" width="60">
                       <center><a href="/val/{{ idSolicitud }}/{{ candidato.0 }}/0" style="color:#FFFFFF;">No validado</a></center>
                     </td>
 

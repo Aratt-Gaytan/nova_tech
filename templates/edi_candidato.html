@@ -1,5 +1,4 @@
- {% extends "layout.html" %}
-
+{% extends "layout.html" %}
 {% block content %}
 
             <form class="form-inline" action="/modifica_solicitante/{{datos[0]}}" method="post">
@@ -10,11 +9,11 @@
                   <label for="curp">Curp</label>
                     <input type="text" class="form-control" name="curp" id="curp" value="{{datos.0[0]}}" pattern="[A-Z]{4}[0-9]{6}[A-Z]{6}[0-9A-Z]{1}[0-9]{1}" required>
                 </div>
- <div class="form-group col-md-2">
+                <div class="form-group col-md-2">
                         <label for="nombre">Nombre</label>
                         <input type="text" class="form-control" name="nombre" id="nombre" value="{{datos.0[2]}}" required>
                     </div>
- <div class="form-group col-md-2">
+                <div class="form-group col-md-2">
                         <label for="rfc">RFC</label>
                         <input type="text" class="form-control" name="rfc" id="rfc" value="{{datos.0[1]}}" pattern="[A-Z]{4}[0-9]{6}[0-9A-Z]{3}" required>
                     </div>
@@ -50,9 +49,9 @@
 
                         <option selected="true" value"Hombre">Hombre</option>
                             <option style="background-color: #FFFFFF; color:#000000" value="Mujer">Mujer</option>
- {% else %}
- <option selected="true" value="Mujer">Mujer</option>
- <option style="background-color: #FFFFFF; color:#000000"  value"Hombre">Hombre</option>
+                     {% else %}
+                     <option selected="true" value="Mujer">Mujer</option>
+                     <option style="background-color: #FFFFFF; color:#000000"  value"Hombre">Hombre</option>
 
                         {% endif %}
                         </select>
@@ -64,7 +63,7 @@
                         {% for estado in estados %}
                         {% if datos.0[10] ==estado.0 %}
                         <option selected="true" value="{{ estado.0 }}">{{ estado.1 }}</option>
- {% else %}
+                      {% else %}
                          <option style="background-color: #FFFFFF; color:#000000" value="{{estado.0}}">{{estado.1}}</option>
                         {% endif %}
                         {% endfor %}

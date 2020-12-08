@@ -1,5 +1,4 @@
-
-        {% extends "layout.html" %}
+{% extends "layout.html" %}
 {% block content %}
 
 <center><h3>Solicitud</h3></center>
@@ -13,9 +12,7 @@
                   <td style="color:#FFFFFF" bgcolor="262626" >Nivel academico</td>
                   <td style="color:#FFFFFF" bgcolor="262626">Fecha de solicitud</td>
                   <td style="color:#FFFFFF" bgcolor="262626">Vacantes</td>
-          <td style="color:#FFFFFF" bgcolor="262626" >Estatus</td>
-
-         
+                  <td style="color:#FFFFFF" bgcolor="262626" >Estatus</td>
                 </tr>
               </thead>
               <tbody>
@@ -42,9 +39,9 @@
                      <td>
                       {{ dato.12 }}
                     </td>
-                  
-                   
-                
+
+
+
                   </tr>
                 {% endfor %}
               </tbody>
@@ -64,7 +61,7 @@
                   <td style="color:#FFFFFF" bgcolor="262626">Carrera</td>
                   <td style="color:#FFFFFF" bgcolor="262626"></td>
                   <td style="color:#FFFFFF" bgcolor="262626"></td>
-               
+
                 </tr>
               </thead>
               <tbody>
@@ -92,7 +89,7 @@
             </table>
           </td>
         </tr>
-    
+
 
            <br>
            <center><h3>Posibles candidatos</h3></center>
@@ -132,7 +129,7 @@
                     <td  bgcolor="#00C56C" width="60">
                       <center><a href="/ins_candidato/{{candidato.0}}/{{idSolicitud}}" style="color:#FFFFFF;">Selecionar</a></center>
                     </td>
-            
+
                   </tr>
                 {% endfor %}
               </tbody>

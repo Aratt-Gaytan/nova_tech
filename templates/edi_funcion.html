@@ -1,5 +1,5 @@
-<body>{% extends "layout.html" %}
-
+<body>
+{% extends "layout.html" %}
 {% block content %}
 
 
@@ -12,17 +12,12 @@
             <input name="descripcion" rows="5" cols="65" class="form-control" value="{{descripcion.0}}" required>
             {% endfor %}
             <br>
-               <br>
-               <br>
+            <br>
+            <br>
+            <button class="btn btn-primary">Actualiza</button>
 
-
-
-
-                      <button class="btn btn-primary">Actualiza</button>
-
-</div>
+        </div>
     </form>
 
 {% endblock %}
 </body>
-

@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-
 {% block content %}
             <center><h3>Definición del perfil</h3></center>
             <form action="/modifica_perfil/{{puestos.0[0]}}" method="post">
@@ -40,7 +39,7 @@
                                 {%   endfor %}
                              </select>&nbsp;&nbsp;&nbsp;
                               <label for="perm">Permisos</label>&nbsp;&nbsp;&nbsp;
-<select name="perm" id="perm" class="form-control" required>
+                              <select name="perm" id="perm" class="form-control" required>
 
                                  {%
                                      for permiso in permisos
