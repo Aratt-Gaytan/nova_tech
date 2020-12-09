@@ -10,7 +10,7 @@ app.secret_key = "MySecretKey1234"
 estatus = 0
 usuario = 0
 users = []
-## se crea una clase llamada usuario 
+## se crea una clase llamada usuario
 class user:
     def __init__(self, id, username, password, id_funcion, funcion):
         self.id         = id
@@ -28,8 +28,8 @@ class user:
 #     if "user_id" in session:
 #         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
 #         cursor = conn.cursor()
-#         cursor.execute('''SELECT a.idusuario, a.usuario, a.password, a.nombre, b.idperfil_admo, b.descripcion 
-#             from Usuario a, perfil_admo b 
+#         cursor.execute('''SELECT a.idusuario, a.usuario, a.password, a.nombre, b.idperfil_admo, b.descripcion
+#             from Usuario a, perfil_admo b
 #             WHERE a.idperfil_admo = b.idperfil_admo  and a.idusuario = %s''',(session["user_id"]))
 #         dato = cursor.fetchone()
 #         print(dato)
@@ -119,7 +119,7 @@ def registrar():
         datos = cursor.fetchall()
         print(datos)
         cursor.execute(
-            '''SELECT a.idusuario, a.usuario, a.password, a.nombre, a.idperfil_admo, b.idperfil_admo, b.descripcion 
+            '''SELECT a.idusuario, a.usuario, a.password, a.nombre, a.idperfil_admo, b.idperfil_admo, b.descripcion
             from Usuario a, perfil_admo b WHERE a.idperfil_admo = b.idperfil_admo and a.idusuario = (select max(idusuario) from Usuario)''')
         datos1 = cursor.fetchall()
         cursor.execute('select idperfil_admo, descripcion from perfil_admo ')
@@ -151,7 +151,7 @@ def ed_usuario(id):
     datos3 = cursor.fetchall()
     return render_template("edi_usuario.html", puestos=datos, pue_habs=datos1,habs=datos3)
 
-## toma los datos del formulario y edita el ususario 
+## toma los datos del formulario y edita el ususario
 @app.route('/modifica_usuario/<string:id>', methods = ['POST'])
 def modifica_usuario(id):
     if request.method == 'POST':
@@ -183,7 +183,7 @@ def agrega_perfil_usuario():
         cursor.execute('select idusuario from Usuario where idusuario= %s', (aux_pto))
         datos = cursor.fetchall()
         cursor.execute(
-            '''SELECT a.idusuario, a.usuario, a.password, a.nombre, a.idperfil_admo, b.idperfil_admo, b.descripcion 
+            '''SELECT a.idusuario, a.usuario, a.password, a.nombre, a.idperfil_admo, b.idperfil_admo, b.descripcion
             from Usuario a, perfil_admo b WHERE a.idperfil_admo = b.idperfil_admo and a.idusuario = %s''',
             (aux_pto))
         datos1 = cursor.fetchall()
@@ -224,7 +224,7 @@ def ed_perfil(id):
     cursor.execute('select idperfil_admo, descripcion from perfil_admo where idperfil_admo= %s', (id))
     datos  = cursor.fetchall()
     cursor.execute(
-        '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion  
+        '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion
         from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  where a.idperfil_admo=c.idperfil_admo and b.idproceso=c.idproceso and c.idpermisos=d.idpermisos and a.idperfil_admo=%s''',
         (id))
     datos1 = cursor.fetchall()
@@ -251,8 +251,8 @@ def agrega_proceso_perfil():
                    ' from perfil_admo where idperfil_admo= %s', (aux_pto))
         datos = cursor.fetchall()
         cursor.execute(
-            '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion  
-            from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  
+            '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion
+            from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d
             where a.idperfil_admo = c.idperfil_admo and b.idproceso = c.idproceso and c.idpermisos = d.idpermisos and a.idperfil_admo = %s''',
             (aux_pto))
         datos1 = cursor.fetchall()
@@ -263,7 +263,7 @@ def agrega_proceso_perfil():
         conn.close()
         return render_template("edi_perfil.html", puestos = datos, pue_habs = datos1, permisos = datos4, habs = datos3)
 
-## borra el proceso del perfil 
+## borra el proceso del perfil
 @app.route("/bo_pro_pe/<string:id>/<string:idh>/<string:idp>")
 def bo_pro_pre(id, idh,idp):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
@@ -273,8 +273,8 @@ def bo_pro_pre(id, idh,idp):
     cursor.execute('select idperfil_admo, descripcion from perfil_admo where idperfil_admo = %s', (id))
     datos = cursor.fetchall()
     cursor.execute(
-        '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion  
-        from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  
+        '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion
+        from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d
         where a.idperfil_admo = c.idperfil_admo and b.idproceso = c.idproceso and c.idpermisos = d.idpermisos and a.idperfil_admo = %s''',
         (id))
     datos1 = cursor.fetchall()
@@ -311,9 +311,9 @@ def agrega_perfil():
         cursor.execute('select idperfil_admo, descripcion from perfil_admo where idperfil_admo=(select max(idperfil_admo) from perfil_admo)')
         datos = cursor.fetchall()
         cursor.execute(
-            '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion  
-            from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  
-            where a.idperfil_admo=c.idperfil_admo and b.idproceso=c.idproceso and c.idpermisos=d.idpermisos 
+            '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion
+            from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d
+            where a.idperfil_admo=c.idperfil_admo and b.idproceso=c.idproceso and c.idpermisos=d.idpermisos
             and a.idperfil_admo=(select max(idperfil_admo) from perfil_admo)''')
         datos1 = cursor.fetchall()
         cursor.execute('select idproceso, desc_proceso from proceso ')
@@ -477,7 +477,7 @@ def modifica_candidato(id):
         aux_sexo      = request.form['sexo']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('''UPDATE candidato SET Curp =%s, RFC =%s, Nombre =%s, Domicilio =%s, 
+        cursor.execute('''UPDATE candidato SET Curp =%s, RFC =%s, Nombre =%s, Domicilio =%s,
             Telefono =%s, E_mail =%s, Sexo =%s, Edad =%s, NSS =%s, idEstadoCivil=%s WHERE Curp =%s''' ,
         (aux_curp, aux_rfc, aux_nombre, aux_domicilio,
         aux_telefono, aux_email, aux_sexo, aux_edad, aux_nss, aux_estadociv,aux_curp))
@@ -526,7 +526,7 @@ def agrega_hab_candidato(id, idh):
         cursor.execute('select * from carrera order by Descripcion')
         datos10 = cursor.fetchall()
         conn.close()
-        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, 
+        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
                                 can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
 ## borra las habilidades asociadas del candidato
 
@@ -567,7 +567,7 @@ def bo_hab_can(id, idh):
     cursor.execute('select * from carrera order by Descripcion')
     datos10 = cursor.fetchall()
     conn.close()
-    return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, 
+    return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
                             can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
 
 ## agrega los idiomas asociadas del candidato
@@ -611,7 +611,7 @@ def agrega_idio_candidato(id, idi):
         cursor.execute('select * from carrera order by Descripcion')
         datos10 = cursor.fetchall()
         conn.close()
-        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, 
+        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
                                 can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
 
 ## borra los idiomas asociados al candidato
@@ -652,7 +652,7 @@ def bo_idio_can(id, idi):
     cursor.execute('select * from carrera order by Descripcion')
     datos10 = cursor.fetchall()
     conn.close()
-    return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, 
+    return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
                             can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
 
 
@@ -700,7 +700,7 @@ def agrega_nivel_candidato(id, idn):
         cursor.execute('select * from carrera order by Descripcion')
         datos10 = cursor.fetchall()
         conn.close()
-        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, 
+        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
                                 can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
 
 ## borra los niveles academicos asociados al candidato
@@ -741,7 +741,7 @@ def bo_nivel_can(id, idn, idc):
     cursor.execute('select * from carrera order by Descripcion')
     datos10 = cursor.fetchall()
     conn.close()
-    return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, 
+    return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
                             can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
 
 ## elimina al candidato de la base de datos
@@ -1113,7 +1113,7 @@ def agrega_puesto():
         cursor.execute(
             'insert into puesto (Descripcion, SalarioAnual, Beneficios, Bonos,  Aprobacion) values (%s,%s,%s,%s,%s)',
             (aux_des, aux_sal, aux_ben, aux_bon, aux_aut))
-        conn.commit() 
+        conn.commit()
         cursor.execute(
             'select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos,Aprobacion from puesto where idPuesto=(select max(idPuesto) from puesto)')
         datos = cursor.fetchall()
@@ -1248,7 +1248,7 @@ def agrega_idio_pto():
             (aux_pto))
         datos  = cursor.fetchall()
         cursor.execute(
-            '''select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto,c.idHabilidad, c.Experiencia  
+            '''select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto,c.idHabilidad, c.Experiencia
             from puesto a, habilidad b,puesto_has_habilidad c  where a.idPuesto=c.idPuesto and b.idHabilidad=c.idHabilidad and c.idPuesto=%s''',
             (aux_pto))
         datos1 = cursor.fetchall()
@@ -1606,7 +1606,7 @@ def edi_datos(id):
         'select CIF_empresa from datos_de_empresa')
     cif    = cursor.fetchall()
     conn.close()
-    return render_template('edita_empresa.html', nom = nom, des = des, est = est, raz = raz, ema = ema, dom = dom, tel = tel, 
+    return render_template('edita_empresa.html', nom = nom, des = des, est = est, raz = raz, ema = ema, dom = dom, tel = tel,
                             enc = enc, cif = cif, dato = id)
 ##########################################################################################################################################################
 
@@ -1687,7 +1687,7 @@ def ed_solicitud(id):
     cursor.execute('select idEstatus_Solicitud, Descripcion from estatus_solicitud')
     datos5 = cursor.fetchall()
     conn.close()
-    return render_template("edi_solicitud.html", areas = datos, puestos = datos1, carreras = datos2, niveles = datos3, 
+    return render_template("edi_solicitud.html", areas = datos, puestos = datos1, carreras = datos2, niveles = datos3,
                             solicitud = datos4, estatuses = datos5)
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
@@ -1735,9 +1735,10 @@ def faltante():
 def Autorizacion():
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
-        from solicitud a, area b, puesto c, nivelacademico d , carrera e,  estatus_solicitud f
-        where b.idArea=a.idArea and c.idPuesto=a.idPuesto and d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud and a.idCarrera=e.idCarrera order by a.idEstatus_Solicitud''')
+    cursor.execute('''select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,
+    a.idNivelAcademico,d.Descripcion,a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
+    from solicitud a, area b, puesto c, nivelacademico d , carrera e,  estatus_solicitud f where b.idArea=a.idArea and c.idPuesto=a.idPuesto and
+    d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud and (a.idEstatus_Solicitud=1) and a.idCarrera=e.idCarrera order by a.idEstatus_Solicitud''')
     datos  = cursor.fetchall()
     conn.close()
     return render_template("autoriza.html", datos = datos)
@@ -2012,7 +2013,7 @@ def muestra_candidato(id,soli):
     cursor.execute('select * from carrera order by Descripcion')
     datos10 = cursor.fetchall()
     conn.close()
-    return render_template("muestra_can.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, can_habs = datos6, 
+    return render_template("muestra_can.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, can_habs = datos6,
                             estados = datos7, nivelesC = datos9, carrerasN = datos10, idSolicitud = soli)
 
 ## termina una solicitud
@@ -2025,7 +2026,7 @@ def termina_solicitud(id):
     conn.close()
     return redirect(url_for('asignacion_can'))
 
-## muestra las solicitudes para calificar    
+## muestra las solicitudes para calificar
 @app.route("/calificacion_psicologica")
 def calificacionpsicologica():
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
@@ -2074,7 +2075,7 @@ def calificacion_p(ca,so):
         where b.curp = a.curp and c.idNivelAcademico = b.idNivelAcademico and d.idCarrera = b.idCarrera and
         NOT EXISTS (SELECT NULL FROM resultadocandidato e WHERE e.Curp = a.Curp and e.idSolicitud=%s) ''',(so))
     datos  = cursor.fetchall()
-    cursor.execute('''select a.Curp, b.Nombre, c.idNivelAcademico, c.idCarrera, d.descripcion, e.descripcion, 
+    cursor.execute('''select a.Curp, b.Nombre, c.idNivelAcademico, c.idCarrera, d.descripcion, e.descripcion,
         a.apto,a.Personalidad,a.CoeficienteIntelectual, a.apto_psico
         from resultadocandidato a,candidato b, candidato_has_nivelacademico c, nivelacademico d, carrera e where b.curp = a.curp
         and b.curp=%s and d.idNivelAcademico = c.idNivelAcademico and e.idcarrera = c.idcarrera and a.idSolicitud=%s and a.Curp = %s''', (ca,so,ca))
@@ -2098,13 +2099,29 @@ def califica_psico(so,ca):
         aux_calif      = request.form['calificaion']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('''UPDATE resultadocandidato SET Personalidad = %s, CoeficienteIntelectual = %s, apto = %s,apto_psico = %s 
+        cursor.execute('''UPDATE resultadocandidato SET Personalidad = %s, CoeficienteIntelectual = %s, apto = %s,apto_psico = %s
             WHERE resultadocandidato.idSolicitud = %s AND resultadocandidato.Curp = %s;''', (aux_person,aux_ci,aux_apto,aux_calif,so,ca))
         conn.commit()
+        cursor.execute('''select a.Curp, a.Nombre, c.idNivelAcademico, c.descripcion, d.descripcion from
+        candidato a, candidato_has_nivelacademico b, nivelacademico c, carrera d
+        where b.curp = a.curp and c.idNivelAcademico = b.idNivelAcademico and d.idCarrera = b.idCarrera and
+        NOT EXISTS (SELECT NULL FROM resultadocandidato e WHERE e.Curp = a.Curp and e.idSolicitud=%s) ''',(so))
+        datos  = cursor.fetchall()
+        cursor.execute('''select a.Curp, b.Nombre, c.idNivelAcademico, c.idCarrera, d.descripcion, e.descripcion
+            from resultadocandidato a,candidato b, candidato_has_nivelacademico c, nivelacademico d, carrera e where b.curp = a.curp
+            and c.curp = b.curp and d.idNivelAcademico = c.idNivelAcademico and e.idcarrera = c.idcarrera and a.idSolicitud=%s''', (so))
+        datos2 = cursor.fetchall()
+        cursor.execute('''
+            select a.idSolicitud,a.FechaSolicitud,a.NumeroVacante,a.idArea,b.AreaDescripcion,a.idPuesto,c.Descripcion,a.idNivelAcademico,d.Descripcion,
+            a.idCarrera,e.Descripcion,a.idEstatus_Solicitud,f.Descripcion
+            from solicitud a, area b, puesto c, nivelacademico d , carrera e, estatus_solicitud f where b.idArea=a.idArea
+            and c.idPuesto=a.idPuesto and d.idNivelAcademico=a.idNivelAcademico and f.idEstatus_Solicitud=a.idEstatus_Solicitud and a.idCarrera=e.idCarrera
+            and (a.idEstatus_solicitud = 3 or a.idEstatus_solicitud = 4) and a.idSolicitud=%s order by a.idEstatus_Solicitud ''',(so))
+        datos3 = cursor.fetchall()
         conn.close()
-        return redirect(url_for("calificacionpsicologica"))
+        return render_template("calif_psico.html", candidatos = datos, can_selec = datos2, idSolicitud = id, solicitud = datos3)
 
-## muestra las solicitudes publicadas 
+    ## muestra las solicitudes publicadas
 @app.route("/calificacion_tecnica")
 def calificaciontecnica():
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
@@ -2183,16 +2200,16 @@ def calif_solicitante_tecnica(id,soli):
     cursor.execute('select * from carrera order by Descripcion')
     datos10 = cursor.fetchall()
     conn.close()
-    return render_template("calif_tec.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, can_habs = datos6, 
+    return render_template("calif_tec.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, can_habs = datos6,
                             estados = datos7, nivelesC = datos9, carrerasN = datos10, idSolicitud = soli)
 
-## califica el idioma    
+## califica el idioma
 @app.route("/cali_tec/idio/<string:idi>/<string:ca>/<string:cal>/<string:soli>")
 def cali_tec_idio(idi,ca,cal,soli):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor  = conn.cursor()
-    cursor.execute('''UPDATE `candidato_has_idioma` SET `Apto` = %s 
-        WHERE `candidato_has_idioma`.`Curp` = %s AND `candidato_has_idioma`.`idIdioma` = %s;''', 
+    cursor.execute('''UPDATE `candidato_has_idioma` SET `Apto` = %s
+        WHERE `candidato_has_idioma`.`Curp` = %s AND `candidato_has_idioma`.`idIdioma` = %s;''',
         (cal,ca,idi))
     conn.commit()
     cursor.execute(
@@ -2204,7 +2221,7 @@ def cali_tec_idio(idi,ca,cal,soli):
     cursor.execute(' select * from idioma ')
     datos2  = cursor.fetchall()
     cursor.execute(' select * from nivelacademico ')
-    datos4  = cursor.fetchall()    
+    datos4  = cursor.fetchall()
     cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel, c.Apto '
                    'from candidato a, idioma b,candidato_has_idioma c '
                    'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (ca))
@@ -2224,16 +2241,16 @@ def cali_tec_idio(idi,ca,cal,soli):
     cursor.execute('select * from carrera order by Descripcion')
     datos10 = cursor.fetchall()
     conn.close()
-    return render_template("calif_tec.html", datos = datos, habs = datos1, idiomas = datos2,niveles = datos4, idis = datos5, can_habs = datos6, 
+    return render_template("calif_tec.html", datos = datos, habs = datos1, idiomas = datos2,niveles = datos4, idis = datos5, can_habs = datos6,
                             estados = datos7, nivelesC = datos9, carrerasN = datos10, idSolicitud = soli)
 
-## califica las habilidades    
+## califica las habilidades
 @app.route("/cali_tec/hab/<string:idi>/<string:ca>/<string:cal>/<string:soli>")
 def cali_tec_hab(idi,ca,cal,soli):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('''UPDATE `candidato_has_habilidad` SET `Apto` = %s 
-        WHERE `candidato_has_habilidad`.`Curp` = %s AND `candidato_has_habilidad`.`idHabilidad` = %s;''', 
+    cursor.execute('''UPDATE `candidato_has_habilidad` SET `Apto` = %s
+        WHERE `candidato_has_habilidad`.`Curp` = %s AND `candidato_has_habilidad`.`idHabilidad` = %s;''',
         (cal,ca,idi))
     conn.commit()
     cursor.execute(
@@ -2245,7 +2262,7 @@ def cali_tec_hab(idi,ca,cal,soli):
     cursor.execute(' select * from idioma ')
     datos2 = cursor.fetchall()
     cursor.execute(' select * from nivelacademico ')
-    datos4 = cursor.fetchall()    
+    datos4 = cursor.fetchall()
     cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel, c.Apto '
                    'from candidato a, idioma b,candidato_has_idioma c '
                    'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (ca))
@@ -2265,16 +2282,16 @@ def cali_tec_hab(idi,ca,cal,soli):
     cursor.execute('select * from carrera order by Descripcion')
     datos10 = cursor.fetchall()
     conn.close()
-    return render_template("calif_tec.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, can_habs = datos6, 
+    return render_template("calif_tec.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, can_habs = datos6,
         estados = datos7, nivelesC = datos9, carrerasN = datos10, idSolicitud = soli)
-    
-## califica el nivel academico    
+
+## califica el nivel academico
 @app.route("/cali_tec/niv/<string:idi>/<string:ca>/<string:cal>/<string:soli>")
 def cali_tec_niv(idi,ca,cal,soli):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor  = conn.cursor()
-    cursor.execute('''UPDATE `candidato_has_nivelacademico` SET `Apto` = %s 
-        WHERE `candidato_has_nivelacademico`.`Curp` = %s AND `candidato_has_nivelacademico`.`idNivelAcademico` =%s;''', 
+    cursor.execute('''UPDATE `candidato_has_nivelacademico` SET `Apto` = %s
+        WHERE `candidato_has_nivelacademico`.`Curp` = %s AND `candidato_has_nivelacademico`.`idNivelAcademico` =%s;''',
         (cal,ca,idi))
     conn.commit()
     cursor.execute(
@@ -2286,7 +2303,7 @@ def cali_tec_niv(idi,ca,cal,soli):
     cursor.execute(' select * from idioma ')
     datos2  = cursor.fetchall()
     cursor.execute(' select * from nivelacademico ')
-    datos4  = cursor.fetchall()    
+    datos4  = cursor.fetchall()
     cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel, c.Apto '
                    'from candidato a, idioma b,candidato_has_idioma c '
                    'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (ca))
@@ -2306,9 +2323,9 @@ def cali_tec_niv(idi,ca,cal,soli):
     cursor.execute('select * from carrera order by Descripcion')
     datos10 = cursor.fetchall()
     conn.close()
-    return render_template("calif_tec.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, can_habs = datos6, 
+    return render_template("calif_tec.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5, can_habs = datos6,
                             estados = datos7,nivelesC = datos9, carrerasN = datos10, idSolicitud = soli)
-    
+
 ## muestra las solicitudes con candidatos
 @app.route("/calificacion_medica")
 def calificacion_medica():
@@ -2350,8 +2367,8 @@ def calif_medica(id):
 def cal_medica(sol,can,cal):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('''UPDATE resultadocandidato SET Calificacion_Medica = %s 
-        WHERE `Curp` = %s AND idSolicitud = %s;''', 
+    cursor.execute('''UPDATE resultadocandidato SET Calificacion_Medica = %s
+        WHERE `Curp` = %s AND idSolicitud = %s;''',
         (cal,can,sol))
     conn.commit()
     cursor.execute('''select a.Curp, a.Nombre, c.idNivelAcademico, c.descripcion, d.descripcion from
@@ -2373,7 +2390,7 @@ def cal_medica(sol,can,cal):
     conn.close()
     return render_template("calif_medica.html", candidatos = datos, can_selec = datos2, idSolicitud=sol, solicitud = datos4 )
 
-## muestra las solicitudes con candidatos registrados 
+## muestra las solicitudes con candidatos registrados
 @app.route("/validacion")
 def validacion():
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
@@ -2418,8 +2435,8 @@ def sel_can_a_val(id):
 def val(sol,can,cal):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('''UPDATE resultadocandidato SET validacion = %s 
-        WHERE `Curp` = %s AND idSolicitud = %s;''', 
+    cursor.execute('''UPDATE resultadocandidato SET validacion = %s
+        WHERE `Curp` = %s AND idSolicitud = %s;''',
         (cal,can,sol))
     conn.commit()
     cursor.execute('''select a.Curp, a.Nombre, c.idNivelAcademico, c.descripcion, d.descripcion from
@@ -2442,8 +2459,8 @@ def val(sol,can,cal):
     conn.close()
     return render_template("can_val.html", candidatos = datos, can_selec = datos2, idSolicitud = sol, solicitud = datos4 )
 
-## corre la pagina web en el puerto 3000 
+## corre la pagina web en el puerto 3000
 ## comentarlo cuando este en pytohn anywhere
 ## selecciona las loneas y preciona  ctrl + }
-# if __name__ == "__main__":             
+# if __name__ == "__main__":
 #     app.run(port=3000, debug=True)
