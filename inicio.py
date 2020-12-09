@@ -221,19 +221,29 @@ def perfil():
 def ed_perfil(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('select idperfil_admo, descripcion from perfil_admo where idperfil_admo= %s', (id))
-    datos  = cursor.fetchall()
-    cursor.execute(
-        '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion
-        from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  where a.idperfil_admo=c.idperfil_admo and b.idproceso=c.idproceso and c.idpermisos=d.idpermisos and a.idperfil_admo=%s''',
-        (id))
-    datos1 = cursor.fetchall()
-    cursor.execute('select idproceso, desc_proceso from proceso ')
-    datos3 = cursor.fetchall()
-    cursor.execute('select idpermisos, descripcion from permisos ')
-    datos4 = cursor.fetchall()
-    conn.close()
-    return render_template("edi_perfil.html", puestos = datos, pue_habs = datos1, permisos = datos4, habs = datos3)
+
+    cursor.execute("SELECT COUNT(*) from perfil_admo_has_proceso WHERE idperfil_admo = %s", (id))
+    ph_pue = cursor.fetchone()
+    cursor.execute("SELECT COUNT(*) from Usuario WHERE idperfil_admo= %s", (id))
+    pi_pue = cursor.fetchone()
+    if ph_pue[0] == 0 and pi_pue[0] == 0 :
+        cursor.execute('select idperfil_admo, descripcion from perfil_admo where idperfil_admo= %s', (id))
+        datos  = cursor.fetchall()
+        cursor.execute(
+            '''select a.idperfil_admo,a.descripcion, b.idproceso,b.desc_proceso,d.idpermisos, d.descripcion,d.idpermisos,d.descripcion
+            from perfil_admo a, proceso b,perfil_admo_has_proceso c, permisos d  where a.idperfil_admo=c.idperfil_admo and b.idproceso=c.idproceso and c.idpermisos=d.idpermisos and a.idperfil_admo=%s''',
+            (id))
+        datos1 = cursor.fetchall()
+        cursor.execute('select idproceso, desc_proceso from proceso ')
+        datos3 = cursor.fetchall()
+        cursor.execute('select idpermisos, descripcion from permisos ')
+        datos4 = cursor.fetchall()
+        conn.close()
+        return render_template("edi_perfil.html", puestos = datos, pue_habs = datos1, permisos = datos4, habs = datos3)
+    else:
+        error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error = error , paginaant = "/perfil")
 
 ## agrega el proceso a el perfil (leer o editar)
 @app.route('/agrega_proceso_perfil', methods=['POST'])
@@ -336,7 +346,7 @@ def bo_perfil(id):
     ph_pue = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from Usuario WHERE idperfil_admo= %s", (id))
     pi_pue = cursor.fetchone()
-    if ph_pue[0] == 0 and pi_pue[0] == 0 :
+    if ph_pue[0] == 0 or pi_pue[0] == 0 :
         cursor.execute('delete from perfil_admo where idperfil_admo = {0}'.format(id))
         conn.commit()
         conn.close()
@@ -383,54 +393,67 @@ def agrega_candidato():
         aux_email     = request.form['email']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor        = conn.cursor()
-        cursor.execute('''insert into candidato(CURP,RFC, Nombre,Domicilio, Telefono,E_mail,
-            Sexo,Edad,NSS,idEstadoCivil) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
-            (aux_curp, aux_rfc, aux_nombre, aux_domicilio,aux_telefono, aux_email, aux_sexo, aux_edad, aux_nss, aux_estadociv))
-        conn.commit()
-        cursor.execute(
-            ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,idEstadoCivil from candidato where CURP=%s',
-            (aux_curp))
-        datos = cursor.fetchall()
-        cursor.execute(' select * from habilidad ')
-        datos1 = cursor.fetchall()
-        cursor.execute(' select * from idioma ')
-        datos2 = cursor.fetchall()
-        cursor.execute(' select * from nivelacademico ')
-        datos4 = cursor.fetchall()
-        cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel '
-                       'from candidato a, idioma b,candidato_has_idioma c '
-                       'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (aux_curp))
-        datos5 = cursor.fetchall()
-        cursor.execute('select a.CURP, b.idHabilidad,b.Descripcion,c.CURP, c.idHabilidad, c.Experiencia '
-                       'from candidato a, habilidad b,candidato_has_habilidad c '
-                       'where a.CURP=c.CURP and b.idHabilidad=c.idHabilidad and a.CURP=%s ', (aux_curp))
-        datos6 = cursor.fetchall()
-        cursor.execute('select * from estadocivil order by Descripcion')
-        datos7 = cursor.fetchall()
 
-        cursor.execute(
-            'select a.CURP, b.idNivelAcademico,b.Descripcion,c.Institucion,c.CURP, c.idNivelAcademico,c.idCarrera ,d.Descripcion '
-            'from candidato a, nivelacademico b,candidato_has_nivelacademico c, carrera d '
-            ' where a.CURP=c.CURP and b.idNivelAcademico=c.idNivelacademico and c.idCarrera = d.idCarrera and a.CURP=%s ',
-            (aux_curp))
-        datos9 = cursor.fetchall()
-        cursor.execute('select * from carrera order by Descripcion')
-        datos10 = cursor.fetchall()
-        conn.close()
-        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2,
-                               niveles = datos4, idis = datos5, can_habs = datos6, estados = datos7,
-                               nivelesC = datos9, carrerasN = datos10)
+        cursor.execute("SELECT COUNT(*) from candidato_has_idioma WHERE CURP = %s", (aux_curp))
+        s_niv  = cursor.fetchone()
+        cursor.execute("SELECT COUNT(*) from candidato_has_habilidad WHERE CURP = %s", (aux_curp))
+        c_niv  = cursor.fetchone()
+        cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE CURP = %s", (aux_curp))
+        c_hab  = cursor.fetchone()
+        if s_niv[0] == 0 or c_niv[0] == 0 or c_hab[0] == 0:
+            cursor.execute('''insert into candidato(CURP,RFC, Nombre,Domicilio, Telefono,E_mail,
+                Sexo,Edad,NSS,idEstadoCivil) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
+                (aux_curp, aux_rfc, aux_nombre, aux_domicilio,aux_telefono, aux_email, aux_sexo, aux_edad, aux_nss, aux_estadociv))
+            conn.commit()
+            cursor.execute(
+                ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,idEstadoCivil from candidato where CURP=%s',
+                (aux_curp))
+            datos  = cursor.fetchall()
+            cursor.execute(' select * from habilidad ')
+            datos1 = cursor.fetchall()
+            cursor.execute(' select * from idioma ')
+            datos2 = cursor.fetchall()
+            cursor.execute(' select * from nivelacademico ')
+            datos4 = cursor.fetchall()
+            cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel '
+                           'from candidato a, idioma b,candidato_has_idioma c '
+                           'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (aux_curp))
+            datos5 = cursor.fetchall()
+            cursor.execute('select a.CURP, b.idHabilidad,b.Descripcion,c.CURP, c.idHabilidad, c.Experiencia '
+                           'from candidato a, habilidad b,candidato_has_habilidad c '
+                           'where a.CURP=c.CURP and b.idHabilidad=c.idHabilidad and a.CURP=%s ', (aux_curp))
+            datos6 = cursor.fetchall()
+            cursor.execute('select * from estadocivil order by Descripcion')
+            datos7 = cursor.fetchall()
+
+            cursor.execute(
+                'select a.CURP, b.idNivelAcademico,b.Descripcion,c.Institucion,c.CURP, c.idNivelAcademico,c.idCarrera ,d.Descripcion '
+                'from candidato a, nivelacademico b,candidato_has_nivelacademico c, carrera d '
+                ' where a.CURP=c.CURP and b.idNivelAcademico=c.idNivelacademico and c.idCarrera = d.idCarrera and a.CURP=%s ',
+                (aux_curp))
+            datos9 = cursor.fetchall()
+            cursor.execute('select * from carrera order by Descripcion')
+            datos10 = cursor.fetchall()
+            conn.close()
+            return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2,
+                                   niveles = datos4, idis = datos5, can_habs = datos6, estados = datos7,
+                                   nivelesC = datos9, carrerasN = datos10)
+        else:
+            error = "no se puede agregar ese elemento, ya que ya existe uno con registros parecidos, regresa y vuelve a intentarlo"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/candidato")
 
 ## abre el html para editar el candidato
 @app.route("/ed_solicitante/<string:id>")
 def ed_candidato(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor  = conn.cursor()
+
+
     cursor.execute(
-        ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
-        (id))
+    ' select CURP,RFC, Nombre, Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
+    (id))
     datos   = cursor.fetchall()
-    print(datos)
     cursor.execute(' select * from habilidad ')
     datos1  = cursor.fetchall()
     cursor.execute(' select * from idioma ')
@@ -459,7 +482,8 @@ def ed_candidato(id):
     datos10 = cursor.fetchall()
     conn.close()
     return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
-                            can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
+                            can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10, nombre= datos[0][2])
+
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
 @app.route("/modifica_solicitante/<string:id>", methods = ["POST"])
@@ -477,57 +501,78 @@ def modifica_candidato(id):
         aux_sexo      = request.form['sexo']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('''UPDATE candidato SET Curp =%s, RFC =%s, Nombre =%s, Domicilio =%s,
-            Telefono =%s, E_mail =%s, Sexo =%s, Edad =%s, NSS =%s, idEstadoCivil=%s WHERE Curp =%s''' ,
-        (aux_curp, aux_rfc, aux_nombre, aux_domicilio,
-        aux_telefono, aux_email, aux_sexo, aux_edad, aux_nss, aux_estadociv,aux_curp))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('candidato'))
+        cursor.execute("SELECT COUNT(*) from candidato_has_idioma WHERE CURP = %s", (id))
+        s_niv  = cursor.fetchone()
+        cursor.execute("SELECT COUNT(*) from candidato_has_habilidad WHERE CURP = %s", (id))
+        c_niv  = cursor.fetchone()
+        cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE CURP = %s", (id))
+        c_hab  = cursor.fetchone()
+        if s_niv[0] == 0 or c_niv[0] == 0 or c_hab[0] == 0:
+            cursor.execute('''UPDATE candidato SET Curp =%s, RFC =%s, Nombre =%s, Domicilio =%s,
+                Telefono =%s, E_mail =%s, Sexo =%s, Edad =%s, NSS =%s, idEstadoCivil=%s WHERE Curp =%s''' ,
+            (aux_curp, aux_rfc, aux_nombre, aux_domicilio,
+            aux_telefono, aux_email, aux_sexo, aux_edad, aux_nss, aux_estadociv,id))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('candidato'))
+        else:
+            error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/solicitante")
 
 ## agrega las habilidades asociadas del candidato
-@app.route("/agrega_hab_solicitante/<string:id>/<string:idh>", methods = ["POST"])
-def agrega_hab_candidato(id, idh):
+@app.route("/agrega_hab_solicitante/<string:id>", methods = ["POST"])
+def agrega_hab_candidato(id):
+
     if request.method == 'POST':
         aux_pto       = request.form['can']
         aux_hab       = request.form['habil']
         aux_exp       = request.form['expe']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor        = conn.cursor()
-        cursor.execute('insert into candidato_has_habilidad (CURP, idHabilidad,Experiencia) values (%s,%s,%s)',
+        cursor.execute("SELECT COUNT(*) from candidato_has_habilidad WHERE  idHabilidad= %s and  Curp = %s ", (aux_hab,id))
+        c_niv=cursor.fetchone()
+        print(c_niv[0])
+        if c_niv[0] == 0:
+            cursor.execute('insert into candidato_has_habilidad (CURP, idHabilidad,Experiencia) values (%s,%s,%s)',
                        (aux_pto, aux_hab, aux_exp))
-        conn.commit()
-        cursor.execute(
-            ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
-            (id))
-        datos   = cursor.fetchall()
-        cursor.execute(' select * from habilidad ')
-        datos1  = cursor.fetchall()
-        cursor.execute(' select * from idioma ')
-        datos2  = cursor.fetchall()
-        cursor.execute(' select * from nivelacademico ')
-        datos4  = cursor.fetchall()
-        cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel '
-                       'from candidato a, idioma b,candidato_has_idioma c '
-                       'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (id))
-        datos5  = cursor.fetchall()
-        cursor.execute('select a.CURP, b.idHabilidad,b.Descripcion,c.CURP, c.idHabilidad, c.Experiencia '
-                       'from candidato a, habilidad b,candidato_has_habilidad c '
-                       'where a.CURP=c.CURP and b.idHabilidad=c.idHabilidad and a.CURP=%s ', (id))
-        datos6  = cursor.fetchall()
-        cursor.execute('select * from estadocivil order by Descripcion')
-        datos7  = cursor.fetchall()
-        cursor.execute(
-            'select a.CURP, b.idNivelAcademico,b.Descripcion,c.Institucion,c.CURP, c.idNivelAcademico,c.idCarrera ,d.Descripcion '
-            'from candidato a, nivelacademico b,candidato_has_nivelacademico c, carrera d '
-            ' where a.CURP=c.CURP and b.idNivelAcademico=c.idNivelacademico and c.idCarrera = d.idCarrera and a.CURP=%s ',
-            (id))
-        datos9  = cursor.fetchall()
-        cursor.execute('select * from carrera order by Descripcion')
-        datos10 = cursor.fetchall()
-        conn.close()
-        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
-                                can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
+            conn.commit()
+            cursor.execute(
+                ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
+                (id))
+            datos   = cursor.fetchall()
+            cursor.execute(' select * from habilidad ')
+            datos1  = cursor.fetchall()
+            cursor.execute(' select * from idioma ')
+            datos2  = cursor.fetchall()
+            cursor.execute(' select * from nivelacademico ')
+            datos4  = cursor.fetchall()
+            cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel '
+                           'from candidato a, idioma b,candidato_has_idioma c '
+                           'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (id))
+            datos5  = cursor.fetchall()
+            cursor.execute('select a.CURP, b.idHabilidad,b.Descripcion,c.CURP, c.idHabilidad, c.Experiencia '
+                           'from candidato a, habilidad b,candidato_has_habilidad c '
+                           'where a.CURP=c.CURP and b.idHabilidad=c.idHabilidad and a.CURP=%s ', (id))
+            datos6  = cursor.fetchall()
+            cursor.execute('select * from estadocivil order by Descripcion')
+            datos7  = cursor.fetchall()
+            cursor.execute(
+                'select a.CURP, b.idNivelAcademico,b.Descripcion,c.Institucion,c.CURP, c.idNivelAcademico,c.idCarrera ,d.Descripcion '
+                'from candidato a, nivelacademico b,candidato_has_nivelacademico c, carrera d '
+                ' where a.CURP=c.CURP and b.idNivelAcademico=c.idNivelacademico and c.idCarrera = d.idCarrera and a.CURP=%s ',
+                (id))
+            datos9  = cursor.fetchall()
+            cursor.execute('select * from carrera order by Descripcion')
+            datos10 = cursor.fetchall()
+            conn.close()
+            return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
+                                    can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
+
+        else:
+            error = "no se puede agregar ese elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error=error,paginaant="/ed_solicitante/"+id)
 ## borra las habilidades asociadas del candidato
 
 @app.route("/bo_hab_sol/<string:id>/<string:idh>")
@@ -571,48 +616,57 @@ def bo_hab_can(id, idh):
                             can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
 
 ## agrega los idiomas asociadas del candidato
-@app.route("/agrega_idio_sol/<string:id>/<string:idi>", methods = ["POST"])
-def agrega_idio_candidato(id, idi):
+@app.route("/agrega_idio_sol/<string:id>", methods = ["POST"])
+def agrega_idio_candidato(id):
     if request.method == 'POST':
         aux_pto       = request.form['cani']
         aux_hab       = request.form['idio']
         aux_exp       = request.form['nive']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor        = conn.cursor()
-        cursor.execute('insert into candidato_has_idioma (CURP, idIdioma,Nivel) values (%s,%s,%s)',
-                       (aux_pto, aux_hab, aux_exp))
-        conn.commit()
-        cursor.execute(
-            ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
-            (id))
-        datos   = cursor.fetchall()
-        cursor.execute(' select * from habilidad ')
-        datos1  = cursor.fetchall()
-        cursor.execute(' select * from idioma ')
-        datos2  = cursor.fetchall()
-        cursor.execute(' select * from nivelacademico ')
-        datos4  = cursor.fetchall()
-        cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel '
-                       'from candidato a, idioma b,candidato_has_idioma c '
-                       'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (id))
-        datos5  = cursor.fetchall()
-        cursor.execute('select a.CURP, b.idHabilidad,b.Descripcion,c.CURP, c.idHabilidad, c.Experiencia '
-                       'from candidato a, habilidad b,candidato_has_habilidad c '
-                       'where a.CURP=c.CURP and b.idHabilidad=c.idHabilidad and a.CURP=%s ', (id))
-        datos6  = cursor.fetchall()
-        cursor.execute('select * from estadocivil order by Descripcion')
-        datos7  = cursor.fetchall()
-        cursor.execute(
-            'select a.CURP, b.idNivelAcademico,b.Descripcion,c.Institucion,c.CURP, c.idNivelAcademico,c.idCarrera ,d.Descripcion '
-            'from candidato a, nivelacademico b,candidato_has_nivelacademico c, carrera d '
-            ' where a.CURP=c.CURP and b.idNivelAcademico=c.idNivelacademico and c.idCarrera = d.idCarrera and a.CURP=%s ',
-            (id))
-        datos9  = cursor.fetchall()
-        cursor.execute('select * from carrera order by Descripcion')
-        datos10 = cursor.fetchall()
-        conn.close()
-        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
-                                can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
+        cursor.execute("SELECT COUNT(*) from candidato_has_habilidad WHERE idHabilidad= %s and Curp = %s", (aux_hab,id))
+        c_niv  = cursor.fetchone()
+        if  c_niv[0] == 0:
+
+            cursor.execute('insert into candidato_has_idioma (CURP, idIdioma,Nivel) values (%s,%s,%s)',
+                           (aux_pto, aux_hab, aux_exp))
+            conn.commit()
+            cursor.execute(
+                ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
+                (id))
+            datos   = cursor.fetchall()
+            cursor.execute(' select * from habilidad ')
+            datos1  = cursor.fetchall()
+            cursor.execute(' select * from idioma ')
+            datos2  = cursor.fetchall()
+            cursor.execute(' select * from nivelacademico ')
+            datos4  = cursor.fetchall()
+            cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel '
+                           'from candidato a, idioma b,candidato_has_idioma c '
+                           'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (id))
+            datos5  = cursor.fetchall()
+            cursor.execute('select a.CURP, b.idHabilidad,b.Descripcion,c.CURP, c.idHabilidad, c.Experiencia '
+                           'from candidato a, habilidad b,candidato_has_habilidad c '
+                           'where a.CURP=c.CURP and b.idHabilidad=c.idHabilidad and a.CURP=%s ', (id))
+            datos6  = cursor.fetchall()
+            cursor.execute('select * from estadocivil order by Descripcion')
+            datos7  = cursor.fetchall()
+            cursor.execute(
+                'select a.CURP, b.idNivelAcademico,b.Descripcion,c.Institucion,c.CURP, c.idNivelAcademico,c.idCarrera ,d.Descripcion '
+                'from candidato a, nivelacademico b,candidato_has_nivelacademico c, carrera d '
+                ' where a.CURP=c.CURP and b.idNivelAcademico=c.idNivelacademico and c.idCarrera = d.idCarrera and a.CURP=%s ',
+                (id))
+            datos9  = cursor.fetchall()
+            cursor.execute('select * from carrera order by Descripcion')
+            datos10 = cursor.fetchall()
+            conn.close()
+            return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
+                                    can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
+        else:
+            error = "no se puede agregar ese elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/ed_solicitante/"+id)
+
 
 ## borra los idiomas asociados al candidato
 @app.route("/bo_idi_sol/<string:id>/<string:idi>")
@@ -655,10 +709,9 @@ def bo_idio_can(id, idi):
     return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
                             can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
 
-
 ## agrega los niveles academicos asociadas del candidato
-@app.route("/agrega_nivel_sol/<string:id>/<string:idn>", methods = ["POST"])
-def agrega_nivel_candidato(id, idn):
+@app.route("/agrega_nivel_sol/<string:id>", methods = ["POST"])
+def agrega_nivel_candidato(id):
     if request.method == 'POST':
         aux_pto       = request.form['cannv']
         aux_hab       = request.form['nv']
@@ -666,48 +719,54 @@ def agrega_nivel_candidato(id, idn):
         aux_ins       = request.form['ins']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor   = conn.cursor()
-        cursor.execute(
-            'insert into candidato_has_nivelacademico (CURP, idNivelAcademico,idCarrera,institucion) values (%s,%s,%s,%s)',
-            (aux_pto, aux_hab, aux_car, aux_ins))
-        conn.commit()
-        cursor.execute(
-            ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
-            (id))
-        datos   = cursor.fetchall()
-        cursor.execute(' select * from habilidad ')
-        datos1  = cursor.fetchall()
-        cursor.execute(' select * from idioma ')
-        datos2  = cursor.fetchall()
+        cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idNivelAcademico = %s and Curp = %s", (aux_hab,id))
+        c_niv=cursor.fetchone()
+        if  c_niv[0] == 0:
+            cursor.execute(
+                'insert into candidato_has_nivelacademico (CURP, idNivelAcademico,idCarrera,institucion) values (%s,%s,%s,%s)',
+                (aux_pto, aux_hab, aux_car, aux_ins))
+            conn.commit()
+            cursor.execute(
+                ' select CURP,RFC, Nombre,Domicilio, Telefono,E_mail, Sexo,Edad,NSS,Fotografia,idEstadoCivil from candidato where CURP=%s',
+                (id))
+            datos   = cursor.fetchall()
+            cursor.execute(' select * from habilidad ')
+            datos1  = cursor.fetchall()
+            cursor.execute(' select * from idioma ')
+            datos2  = cursor.fetchall()
 
-        cursor.execute(' select * from nivelacademico ')
-        datos4  = cursor.fetchall()
-        cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel '
-                       'from candidato a, idioma b,candidato_has_idioma c '
-                       'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (id))
-        datos5  = cursor.fetchall()
-        cursor.execute('select a.CURP, b.idHabilidad,b.Descripcion,c.CURP, c.idHabilidad, c.Experiencia '
-                       'from candidato a, habilidad b,candidato_has_habilidad c '
-                       'where a.CURP=c.CURP and b.idHabilidad=c.idHabilidad and a.CURP=%s ', (id))
-        datos6  = cursor.fetchall()
-        cursor.execute('select * from estadocivil order by Descripcion')
-        datos7  = cursor.fetchall()
-        cursor.execute(
-            'select a.CURP, b.idNivelAcademico,b.Descripcion,c.Institucion,c.CURP, c.idNivelAcademico,c.idCarrera ,d.Descripcion '
-            'from candidato a, nivelacademico b,candidato_has_nivelacademico c, carrera d '
-            ' where a.CURP=c.CURP and b.idNivelAcademico=c.idNivelacademico and c.idCarrera = d.idCarrera and a.CURP=%s ',
-            (id))
-        datos9  = cursor.fetchall()
-        cursor.execute('select * from carrera order by Descripcion')
-        datos10 = cursor.fetchall()
-        conn.close()
-        return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
-                                can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
+            cursor.execute(' select * from nivelacademico ')
+            datos4  = cursor.fetchall()
+            cursor.execute('select a.CURP, b.idIdioma,b.Lenguaje,c.CURP, c.idIdioma, c.Nivel '
+                           'from candidato a, idioma b,candidato_has_idioma c '
+                           'where a.CURP=c.CURP and b.idIdioma=c.idIdioma and a.CURP=%s ', (id))
+            datos5  = cursor.fetchall()
+            cursor.execute('select a.CURP, b.idHabilidad,b.Descripcion,c.CURP, c.idHabilidad, c.Experiencia '
+                           'from candidato a, habilidad b,candidato_has_habilidad c '
+                           'where a.CURP=c.CURP and b.idHabilidad=c.idHabilidad and a.CURP=%s ', (id))
+            datos6  = cursor.fetchall()
+            cursor.execute('select * from estadocivil order by Descripcion')
+            datos7  = cursor.fetchall()
+            cursor.execute(
+                'select a.CURP, b.idNivelAcademico,b.Descripcion,c.Institucion,c.CURP, c.idNivelAcademico,c.idCarrera ,d.Descripcion '
+                'from candidato a, nivelacademico b,candidato_has_nivelacademico c, carrera d '
+                ' where a.CURP=c.CURP and b.idNivelAcademico=c.idNivelacademico and c.idCarrera = d.idCarrera and a.CURP=%s ',
+                (id))
+            datos9  = cursor.fetchall()
+            cursor.execute('select * from carrera order by Descripcion')
+            datos10 = cursor.fetchall()
+            conn.close()
+            return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
+                                    can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
+        else:
+            error = "no se puede agregar ese elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/ed_solicitante/"+id)
+
 
 ## borra los niveles academicos asociados al candidato
 @app.route("/bo_nivel_sol/<string:id>/<string:idn>/<string:idc>")
 def bo_nivel_can(id, idn, idc):
-    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
-    cursor  = conn.cursor()
     cursor.execute('delete from candidato_has_nivelacademico where CURP =%s and idNivelAcademico=%s and idCarrera=%s',
                    (id, idn, idc))
     conn.commit()
@@ -744,6 +803,7 @@ def bo_nivel_can(id, idn, idc):
     return render_template("edi_candidato.html", datos = datos, habs = datos1, idiomas = datos2, niveles = datos4, idis = datos5,
                             can_habs = datos6, estados = datos7, nivelesC = datos9, carrerasN = datos10)
 
+
 ## elimina al candidato de la base de datos
 @app.route('/bo_solicitante/<string:id>')
 def bo_candidato(id):
@@ -755,7 +815,7 @@ def bo_candidato(id):
     c_niv  = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE CURP = %s", (id))
     c_hab  = cursor.fetchone()
-    if s_niv[0] == 0 and c_niv[0] == 0 and c_hab[0] == 0:
+    if s_niv[0] == 0 or c_niv[0] == 0 or c_hab[0] == 0:
         cursor.execute('delete from candidato_has_idioma where CURP = %s',(id))
         conn.commit()
         cursor.execute('delete from candidato_has_habilidad where CURP = %s',(id))
@@ -804,9 +864,20 @@ def agrega_nivel():
 def ed_nivel(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('select idNivelAcademico, descripcion from nivelacademico where idNivelAcademico = %s', (id))
-    dato = cursor.fetchall()
-    return render_template("edi_nivel.html", nivel=dato[0])
+    cursor.execute("SELECT COUNT(*) from solicitud WHERE idNivelAcademico = %s", (id))
+    s_niv=cursor.fetchone()
+    cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idNivelAcademico = %s", (id))
+    c_niv=cursor.fetchone()
+    if s_niv[0] == 0 or c_niv[0] == 0:
+        cursor.execute('select idNivelAcademico, descripcion from nivelacademico where idNivelAcademico = %s', (id))
+        dato = cursor.fetchall()
+        conn.close()
+        return render_template("edi_nivel.html", nivel=dato[0])
+    else:
+
+        error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error=error,paginaant="/nivelacademico")
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
 @app.route('/modifica_nivel/<string:id>', methods=['POST'])
@@ -820,6 +891,7 @@ def modifica_nivel(id):
         conn.close()
     return redirect(url_for('nivelacademico'))
 
+
 ## borra el nivel academico
 @app.route('/bo_nivel/<string:id>')
 def bo_nivel(id):
@@ -829,9 +901,7 @@ def bo_nivel(id):
     s_niv=cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idNivelAcademico = %s", (id))
     c_niv=cursor.fetchone()
-    #print(s_niv)
-    #print(c_niv)
-    if s_niv[0] == 0 and c_niv[0] == 0:
+    if s_niv[0] == 0 or c_niv[0] == 0:
         cursor.execute('delete  from nivelacademico where idNivelAcademico = %s', (id))
         conn.commit()
         conn.close()
@@ -880,10 +950,21 @@ def sel_habilidades():
 def ed_habilidad(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('select idHabilidad,Descripcion  from habilidad where idHabilidad = %s', (id))
-    dato = cursor.fetchall()
-    conn.close()
-    return render_template("editar_habilidad.html", habilidad=dato)
+
+    cursor.execute("SELECT COUNT(*) from puesto_has_habilidad WHERE idHabilidad = %s", (id))
+    s_niv=cursor.fetchone()
+    cursor.execute("SELECT COUNT(*) from candidato_has_habilidad WHERE idHabilidad= %s", (id))
+    c_niv=cursor.fetchone()
+    if s_niv[0] == 0 or c_niv[0] == 0:
+        cursor.execute('select idHabilidad,Descripcion  from habilidad where idHabilidad = %s', (id))
+        dato = cursor.fetchall()
+        conn.close()
+        return render_template("editar_habilidad.html", habilidad=dato)
+
+    else:
+        error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error=error,paginaant="/habilidad")
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
 @app.route('/modifica_habilidad/<string:id>', methods=['POST'])
@@ -908,9 +989,7 @@ def borrar_habilidad(id):
     s_niv=cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_habilidad WHERE idHabilidad= %s", (id))
     c_niv=cursor.fetchone()
-    #print(s_niv)
-    #print(c_niv)
-    if s_niv[0] == 0 and c_niv[0] == 0:
+    if s_niv[0] == 0 or c_niv[0] == 0:
         cursor.execute('delete from habilidad where idHabilidad = {0}'.format(id))
         conn.commit()
         conn.close()
@@ -957,10 +1036,20 @@ def agrega_carrera():
 def ed_carrera(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('select idCarrera, descripcion from carrera where idCarrera = %s', (id))
-    dato = cursor.fetchall()
-    conn.close()
-    return render_template("edi_carrera.html", nivel=dato[0])
+    cursor.execute("SELECT COUNT(*) from solicitud WHERE idCarrera = %s", (id))
+    s_niv=cursor.fetchone()
+    cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idCarrera = %s", (id))
+    c_niv=cursor.fetchone()
+    if s_niv[0] == 0 or c_niv[0] == 0:
+        cursor.execute('select idCarrera, descripcion from carrera where idCarrera = %s', (id))
+        dato = cursor.fetchall()
+        conn.close()
+        return render_template("edi_carrera.html", nivel=dato[0])
+
+    else:
+        error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error = error, paginaant = "/carrera")
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
 @app.route('/modifica_carrera/<string:id>', methods=['POST'])
@@ -983,8 +1072,6 @@ def bo_carrera(id):
     s_niv=cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idCarrera = %s", (id))
     c_niv=cursor.fetchone()
-    #print(s_niv)
-    #print(c_niv)
     if s_niv[0] == 0 and c_niv[0] == 0:
         cursor.execute('delete from carrera where idCarrera = {0}'.format(id))
         conn.commit()
@@ -1023,12 +1110,21 @@ def nvo_idioma():
 def edi_idioma(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute(
+
+    cursor.execute("SELECT COUNT(*) from puesto_has_idioma WHERE idIdioma = %s", (id))
+    s_niv  = cursor.fetchone()
+    cursor.execute("SELECT COUNT(*) from candidato_has_idioma WHERE idIdioma = %s", (id))
+    c_niv  = cursor.fetchone()
+    if s_niv[0] == 0 or c_niv[0] == 0:
+        cursor.execute(
         'select Lenguaje from idioma WHERE ididioma = %s', (id))
-    idiomas = cursor.fetchall()
-    #print(idiomas)
-    conn.close()
-    return render_template('edi_idioma.html', idiomas = idiomas, dato = id)
+        idiomas = cursor.fetchall()
+        conn.close()
+        return render_template('edi_idioma.html', idiomas = idiomas, dato = id)
+    else:
+        error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error = error, paginaant = "/idioma")
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
 @app.route('/edita_idioma/<string:id>', methods = ["post"])
@@ -1043,6 +1139,7 @@ def edita_idioma(id):
         conn.close()
     return redirect(url_for("idioma"))
 
+
 # borra el idioma
 @app.route("/bo_idioma/<string:id>")
 def bo_idioma(id):
@@ -1052,9 +1149,7 @@ def bo_idioma(id):
     s_niv  = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_idioma WHERE idIdioma = %s", (id))
     c_niv  = cursor.fetchone()
-    #print(s_niv)
-    #print(c_niv)
-    if s_niv[0] == 0 and c_niv[0] == 0:
+    if s_niv[0] == 0 or c_niv[0] == 0:
         cursor.execute(""" DELETE FROM idioma WHERE ididioma = %s;""", (id))
         conn.commit()
         conn.close()
@@ -1155,24 +1250,36 @@ def modifica_puesto(id):
 def ed_puesto(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos, Aprobacion '
-                   'from puesto where idPuesto=%s', (id))
-    datos  = cursor.fetchall()
-    cursor.execute(
-        'select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto, c.idHabilidad,c.Experiencia  from puesto a, habilidad b,puesto_has_habilidad c  where a.idPuesto=c.idPuesto and b.idHabilidad=c.idHabilidad and c.idPuesto=%s',
-        (id))
-    datos1 = cursor.fetchall()
-    cursor.execute(
-        'select a.idPuesto, b.idIdioma,b.Lenguaje,c.idPuesto, c.idIdioma, c.Nivel from puesto a, idioma b,puesto_has_idioma c where a.idPuesto=c.idPuesto and b.idIdioma=c.idIdioma and c.idPuesto=%s',
-        (id))
 
-    datos2 = cursor.fetchall()
-    cursor.execute('select idhabilidad, Descripcion from habilidad order by Descripcion')
-    datos3 = cursor.fetchall()
-    cursor.execute('select idIdioma, Lenguaje from idioma order by Lenguaje')
-    datos4 = cursor.fetchall()
-    conn.close()
-    return render_template("edi_puesto.html", puestos = datos, pue_habs = datos1, pue_idis = datos2, habs = datos3, idiomas = datos4)
+    cursor.execute("SELECT COUNT(*) from puesto_has_habilidad WHERE idPuesto = %s", (id))
+    ph_pue = cursor.fetchone()
+    cursor.execute("SELECT COUNT(*) from puesto_has_idioma WHERE idPuesto = %s", (id))
+    pi_pue = cursor.fetchone()
+    cursor.execute("SELECT COUNT(*) from solicitud WHERE idPuesto = %s", (id))
+    s_pue  = cursor.fetchone()
+    if ph_pue[0] == 0 or pi_pue[0] == 0 or s_pue[0] == 0:
+        cursor.execute('select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos, Aprobacion '
+                   'from puesto where idPuesto=%s', (id))
+        datos  = cursor.fetchall()
+        cursor.execute(
+            'select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto, c.idHabilidad,c.Experiencia  from puesto a, habilidad b,puesto_has_habilidad c  where a.idPuesto=c.idPuesto and b.idHabilidad=c.idHabilidad and c.idPuesto=%s',
+            (id))
+        datos1 = cursor.fetchall()
+        cursor.execute(
+            'select a.idPuesto, b.idIdioma,b.Lenguaje,c.idPuesto, c.idIdioma, c.Nivel from puesto a, idioma b,puesto_has_idioma c where a.idPuesto=c.idPuesto and b.idIdioma=c.idIdioma and c.idPuesto=%s',
+            (id))
+
+        datos2 = cursor.fetchall()
+        cursor.execute('select idhabilidad, Descripcion from habilidad order by Descripcion')
+        datos3 = cursor.fetchall()
+        cursor.execute('select idIdioma, Lenguaje from idioma order by Lenguaje')
+        datos4 = cursor.fetchall()
+        conn.close()
+        return render_template("edi_puesto.html", puestos = datos, pue_habs = datos1, pue_idis = datos2, habs = datos3, idiomas = datos4)
+    else:
+        error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error = error, paginaant = "/puesto")
 
 ## borra el nivel academico
 @app.route('/bo_puesto/<string:id>')
@@ -1185,7 +1292,7 @@ def bo_puesto(id):
     pi_pue = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from solicitud WHERE idPuesto = %s", (id))
     s_pue  = cursor.fetchone()
-    if ph_pue[0] == 0 and pi_pue[0] == 0 and s_pue[0] == 0:
+    if ph_pue[0] == 0 or pi_pue[0] == 0 or s_pue[0] == 0:
         cursor.execute('delete from puesto_has_idioma where idPuesto = {0}'.format(id))
         conn.commit()
         cursor.execute('delete from puesto_has_habilidad where idPuesto = {0}'.format(id))
@@ -1349,10 +1456,18 @@ def agrega_area():
 def edita_area(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('select idArea, AreaNombre, AreaDescripcion from area where idArea = %s', (id))
-    dato   = cursor.fetchall()
-    conn.close()
-    return render_template("edi_area.html", area = dato[0])
+    cursor.execute("SELECT COUNT(*) from solicitud WHERE idArea = %s", (id))
+    s_area = cursor.fetchone()
+    if s_area[0] == 0:
+        cursor.execute('select idArea, AreaNombre, AreaDescripcion from area where idArea = %s', (id))
+        dato   = cursor.fetchall()
+        conn.close()
+        return render_template("edi_area.html", area = dato[0])
+
+    else:
+        error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error = error, paginaant = "/area")
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
 @app.route('/modifica_area/<string:id>', methods=['POST'])
@@ -1422,10 +1537,17 @@ def agrega_medio_publicidad():
 def ed_medio(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('select idMedioPublicidad,Descripcion from mediopublicidad where idMedioPublicidad = %s', (id))
-    dato   = cursor.fetchall()
-    conn.close()
-    return render_template("editar_medio.html", medio = dato[0])
+    cursor.execute("SELECT COUNT(*) from anuncio WHERE idMedioPublicidad = %s", (id))
+    a_mpublicidad       = cursor.fetchone()
+    if a_mpublicidad[0] == 0:
+        cursor.execute('select idMedioPublicidad,Descripcion from mediopublicidad where idMedioPublicidad = %s', (id))
+        dato   = cursor.fetchall()
+        conn.close()
+        return render_template("editar_medio.html", medio = dato[0])
+    else:
+        error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error = error, paginaant = "/medio_de_publicidad")
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
 @app.route('/modifica_medio/<string:id>', methods = ['POST'])
@@ -1495,10 +1617,17 @@ def agrega_contacto():
 def ed_contacto(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
-    cursor.execute('select idcontacto, Nombre, Domicilio, Razon_Social,Telefono from contacto where idContacto = %s',(id))
-    dato   = cursor.fetchall()
-    conn.close()
-    return render_template("edi_contacto.html", niveles = dato, id = id)
+    cursor.execute("SELECT COUNT(*) from anuncio WHERE idcontacto = %s", (id))
+    a_contacto = cursor.fetchone()
+    if a_contacto[0] == 0:
+        cursor.execute('select idcontacto, Nombre, Domicilio, Razon_Social,Telefono from contacto where idContacto = %s',(id))
+        dato   = cursor.fetchall()
+        conn.close()
+        return render_template("edi_contacto.html", niveles = dato, id = id)
+    else:
+        error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+        conn.close()
+        return render_template("error.html", error = error, paginaant = "/contacto")
 
 ## cambia los datos de la base de datos por lo que ya estan modificados
 @app.route('/modifica_contacto/<string:id>', methods=['POST'])

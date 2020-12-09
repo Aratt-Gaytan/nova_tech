@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
 
-            <form class="form-inline" action="/modifica_solicitante/{{datos[0]}}" method="post">
+            <form class="form-inline" action="/modifica_solicitante/{{datos.0[0]}}" method="post">
                <center><h3>Editar solicitante</h3></center>
+               <br>
+               <h6>Usar mayusculas en todos los campos</h6>
                <div class="form-row">
 
                   <div class="form-group col-md-2">
@@ -83,7 +85,7 @@
 
 <br>
 <br>
-              <button type="submit" class="btn btn-primary">Actualiza</button>
+              <button type="submit" class="btn btn-primary">Actualizar y regresar</button>
 
             </form>
 <!-- -----------------------------------------------------------------  -->
@@ -92,7 +94,7 @@
 
              <div class="panel panel-primary">
                   <div class="panel-heading" >
-                    <form class="form-inline" action="/agrega_hab_solicitante/{{ datos.0[0] }}/{{habs.0[0]}}" method="post">
+                    <form class="form-inline" action="/agrega_hab_solicitante/{{ datos.0[0] }}" method="post">
                         <div class="form-row">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -100,9 +102,7 @@
                              <label for="habil">Habilidad</label>&nbsp;&nbsp;&nbsp;
                              <select name="habil" id="habil" class="form-control" required>
                              <option value="" selected>Choose...</option>
-                                 {%
-                                     for hab in habs
-                                 %}
+                                 {%for hab in habs %}
                                      <option value="{{ hab.0 }}">{{ hab.1 }}</option>
                                 {%   endfor %}
                              </select>&nbsp;&nbsp;&nbsp;
@@ -150,7 +150,7 @@
 
              <div class="panel panel-primary">
                   <div class="panel-heading" >
-                    <form class="form-inline" action="/agrega_idio_sol/{{ datos.0[0] }}/{{ idiomas.0[0] }}" method="post">
+                    <form class="form-inline" action="/agrega_idio_sol/{{ datos.0[0] }}" method="post">
                         <div class="form-row">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
