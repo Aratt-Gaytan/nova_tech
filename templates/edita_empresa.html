@@ -29,7 +29,7 @@
                 <td>
          {% for Telefono in tel %}
         <p><h3>Telefono</h3></p>
-        <input type="tel" rows="3" cols="50" class="form-control" placeholder="Telefono" name="Telefono" id="Telefono" value="{{Telefono.0}}" pattern="[0-9]" required>
+        <input type="tel" rows="3" cols="50" class="form-control" placeholder="Telefono" name="Telefono" id="Telefono" value="{{Telefono.0}}" pattern="[0-9]{10}" required>
         {% endfor %}
                 </td>
             </td>

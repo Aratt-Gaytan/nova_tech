@@ -14,7 +14,7 @@
   <div class="form-row">
     <div class="form-group col-md-2">
       <label for="salario">Salario Anual</label>
-      <input type="text" class="form-control" name="salario" id="salario" placeholder="000000.00" pattern="[0-9+]{1}{99}[.][0-9+]{2}{99}" required>
+      <input type="text" class="form-control" name="salario" id="salario" placeholder="000000.00" title="Por favor, escriba minimo 3 caracteres correctamente (caracteres numericos)" pattern="([0-9]{1,9}.[0-9]{1,9})"  required>
     </div>
     <div class="form-group col-md-8">
       <label for="beneficios">Beneficios</label>
@@ -22,7 +22,7 @@
     </div>
       <div class="form-group col-md-2">
       <label for="bonos">Bonos</label>
-      <input type="text" class="form-control" name="bonos" id="bonos" placeholder="000000.00" pattern="[0-9+]{1}{99}[.][0-9+]{2}{99}" required>
+      <input type="text" class="form-control" name="bonos" id="bonos" placeholder="000000.00" pattern="([0-9]{1,9}.[0-9]{1,9})" title="Por favor, escriba minimo 3 caracteres correctamente correctamente (caracteres numericos)" required>
     </div>
   </div>
   <div class="form-row">

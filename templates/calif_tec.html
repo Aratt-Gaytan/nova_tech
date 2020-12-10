@@ -80,140 +80,151 @@
 
 <!-- -----------------------------------------------------------------  -->
             <br>
-             <form action=""><!--/califica_tecnica_sol/{{ datos.0[0] }}/{{ idSolicitud }}" method="post"-->
-            <center><h3>Habilidades obtenidas</h3></center>
+<center><h3>Habilidades obtenidas</h3></center>
 
-                  <br>
-                  <div class="panel-body">
-                        <center>
-                        <table width="80%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
-                          <thead>
-                            <tr>
-                              <td style="color:white;" bgcolor="black">Habilidad</td>
-                              <td style="color:white;" bgcolor="black">Experiencia</td>
- <td style="color:white;" bgcolor="black">Es Apto?</td>
- <td style="color:white;" bgcolor="black"></td>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for dato in can_habs %}
-                              <tr>
-                                <td>
-                                  {{ dato.2 }}
-                                </td>
-                                <td>
-                                  {{ dato.5 }}
-                                </td>
-                                <td  bgcolor="#129OC2" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">Si</a></center>
-                                </td>
-                                <td  bgcolor="#00C56C" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">NO</a></center>
-                                </td>
-                      </div>
-</td>
-
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                        </center>
-                  </div>
-            </div>
-
+<br>
+<div class="panel-body">
+  <center>
+  <table width="80%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+    <thead>
+    <tr>
+      <td style="color:white;" bgcolor="black">Habilidad</td>
+      <td style="color:white;" bgcolor="black">Experiencia</td>
+      <td style="color:white;" bgcolor="black">Es Apto?</td>
+      <td style="color:white;" bgcolor="black"></td>
+      <td style="color:white;" bgcolor="black"></td>
+    </tr>
+  </thead>
+  <tbody>
+    {% for dato in can_habs %}
+    <tr>
+      <td>
+        {{ dato.2 }}
+      </td>
+      <td>
+        {{ dato.5 }}
+      </td>
+        {% if dato.6 == 0%}
+      <td width="100">
+        NO
+      </td>
+        {%else%}
+      <td width="100">
+        SI
+      </td>
+        {%endif%}
+      <td  bgcolor="#129OC2" width="60">
+        <center><a href="/cali_tec/hab/{{dato.1}}/{{dato.0}}/1/{{ idSolicitud }}" style="color:#FFFFFF;">Si</a></center>
+      </td>
+      <td  bgcolor="#00C56C" width="60">
+        <center><a href="/cali_tec/hab/{{dato.1}}/{{dato.0}}/0/{{ idSolicitud }}" style="color:#FFFFFF;">NO</a></center>
+      </td>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+</table>
+</center>
+</div>
 <!-- -----------------------------------------------------------------  -->
-            <br>
-            <center><h3>Idiomas aprendidos</h3></center>
-
-
-                  <br>
-                  <div class="panel-body">
-                        <center>
-                        <table width="80%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
-                          <thead>
-                            <tr>
-                              <td style="color:white;" bgcolor="black">Idioma</td>
-                              <td style="color:white;" bgcolor="black">Nivel</td>
-                              <td style="color:white;" bgcolor="black">Es Apto?</td>
-                              <td style="color:white;" bgcolor="black"></td>
-
-
-                                </td>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for idi in idis %}
-                              <tr>
-                                <td>
-                                  {{ idi.2 }}
-                                </td>
-                                <td>
-                                  {{ idi.5 }}
-                                </td>
-                                <td  bgcolor="#129OC2" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">Si</a></center>
-                                </td>
-                                <td  bgcolor="#00C56C" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">NO</a></center>
-                                </td>
-                      </div>
-                    </td>
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                        </center>
-                <br>
-
-                      <center><h3>Nivel Academico</h3></center>
-
-
-                  <br>
-                  <div class="panel-body">
-                        <center>
-                        <table width="80%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
-                          <thead>
-                            <tr>
-                              <td style="color:white;" bgcolor="black">Nivel academico</td>
-                                <td style="color:white;" bgcolor="black">Carrera</td>
-                                <td style="color:white;" bgcolor="black">Institucion</td>
-
-                                <td style="color:white;" bgcolor="black">Es Apto?</td>
-                                <td style="color:white;" bgcolor="black"></td>
-
-
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for funcionC in nivelesC %}
-                              <tr>
-                                <td>
-                                  {{ funcionC.2 }}
-                                </td>
-                                <td>
-                                  {{ funcionC.7 }}
-                                </td>
-                                   <td>
-                                  {{ funcionC.3 }}
-                                </td>
-                                <td  bgcolor="#129OC2" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">Si</a></center>
-                                </td>
-                                <td  bgcolor="#00C56C" width="60">
-                                    <center><a href="" style="color:#FFFFFF;">NO</a></center>
-                                </td>
-
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                        </center>
-
-                  </div>
-            </div>
-              <br>
-        <br>
-        <center><a href="/sel_calif_tecnica/{{ idSolicitud }}" class="btn btn-primary">Calificado</a></center>
-      </form>
-
+<br>
+<center><h3>Idiomas aprendidos</h3></center>
+<br>
+<div class="panel-body">
+  <center>
+    <table width="80%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+    <thead>
+    <tr>
+    <td style="color:white;" bgcolor="black">Idioma</td>
+    <td style="color:white;" bgcolor="black">Nivel</td>
+    <td style="color:white;" bgcolor="black">Es Apto?</td>
+    <td style="color:white;" bgcolor="black"></td>
+    <td style="color:white;" bgcolor="black"></td>
+    </td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for idi in idis %}
+    <tr>
+    <td>
+      {{ idi.2 }}
+    </td>
+    <td>
+      {{ idi.5 }}
+    </td>
+      {% if idi.6 == 0%}
+    <td width="100">
+      NO
+    </td>
+      {%else%}
+    <td width="100">
+      SI
+    </td>
+    {%endif%}
+    <td  bgcolor="#129OC2" width="60">
+      <center><a href="/cali_tec/idio/{{idi.1}}/{{idi.0}}/1/{{ idSolicitud }}" style="color:#FFFFFF;">Si</a></center>
+    </td>
+    <td  bgcolor="#00C56C" width="60">
+      <center><a href="/cali_tec/idio/{{idi.1}}/{{idi.0}}/0/{{ idSolicitud }}"style="color:#FFFFFF;">NO</a></center>
+  </td>
+</div>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</center>
+<br>
+<center><h3>Nivel Academico</h3></center>
+<br>
+<div class="panel-body">
+  <center>
+    <table width="80%" border="1" cellpadding="0" cellspacing="0" bordercolor="#000000">
+    <thead>
+      <tr>
+        <td style="color:white;" bgcolor="black">Nivel academico</td>
+        <td style="color:white;" bgcolor="black">Carrera</td>
+        <td style="color:white;" bgcolor="black">Institucion</td>
+        <td style="color:white;" bgcolor="black">Es Apto?</td>
+        <td style="color:white;" bgcolor="black"></td>
+        <td style="color:white;" bgcolor="black"></td>
+      </tr>
+    </thead>
+    <tbody>
+    {% for funcionC in nivelesC %}
+    <tr>
+    <td>
+      {{ funcionC.2 }}
+    </td>
+    <td>
+      {{ funcionC.7 }}
+    </td>
+    <td>
+      {{ funcionC.3 }}
+    </td>
+    {% if funcionC.8 == 0%}
+    <td width="100">
+      NO
+    </td>
+    {%else%}
+    <td width="100">
+      SI
+    </td>
+    {%endif%}
+    <td  bgcolor="#129OC2" width="60">
+      <center><a href="/cali_tec/niv/{{funcionC.1}}/{{funcionC.0}}/1/{{ idSolicitud }}" style="color:#FFFFFF;">Si</a></center>
+    </td>
+    <td  bgcolor="#00C56C" width="60">
+      <center><a href="/cali_tec/niv/{{funcionC.1}}/{{funcionC.0}}/0/{{ idSolicitud }}" style="color:#FFFFFF;">NO</a></center>
+    </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+  </center>
+</div>
+</div>
+<br>
+<br>
+<center><a href="/sel_calif_tecnica/{{ idSolicitud }}" class="btn btn-primary">Regresar</a></center>
 {% endblock %}

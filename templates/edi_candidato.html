@@ -2,14 +2,16 @@
 {% block content %}
 
             <form class="form-inline" action="/modifica_solicitante/{{datos.0[0]}}" method="post">
+              <div class="form-group col-md-3">
                <center><h3>Editar solicitante</h3></center>
                <br>
                <h6>Usar mayusculas en todos los campos</h6>
+             </div>
                <div class="form-row">
 
                   <div class="form-group col-md-2">
                   <label for="curp">Curp</label>
-                    <input type="text" class="form-control" name="curp" id="curp" value="{{datos.0[0]}}" pattern="[A-Z]{4}[0-9]{6}[A-Z]{6}[0-9A-Z]{1}[0-9]{1}" required>
+                    <input type="text" class="form-control" name="curp" id="curp" value="{{datos.0[0]}}" pattern="[A-Z]{4}[0-9]{6}[A-Z]{6}[0-9A-Z]{1}[0-9]{1}"  title="Por favor, escriba la CURP correctamente (10 caracteres alfanumericos)" required minlength="18" maxlength="18" >
                 </div>
                 <div class="form-group col-md-2">
                         <label for="nombre">Nombre</label>
@@ -17,11 +19,11 @@
                     </div>
                 <div class="form-group col-md-2">
                         <label for="rfc">RFC</label>
-                        <input type="text" class="form-control" name="rfc" id="rfc" value="{{datos.0[1]}}" pattern="[A-Z]{4}[0-9]{6}[0-9A-Z]{3}" required>
+                        <input type="text" class="form-control" name="rfc" id="rfc" value="{{datos.0[1]}}" pattern="[A-Z]{4}[0-9]{6}[0-9A-Z]{3}" title="Por favor, escriba el RFC correctamente (10 caracteres Alfanumericos)" required minlength="13" maxlength="13">
                     </div>
                     <div class="form-group col-md-2">
                         <label for="telefono">Numero telefonico</label>
-                <input type="text" class="form-control" name="telefono" id="telefono" value="{{datos.0[4]}}" pattern="[0-9]{10}"     required>
+                <input type="text" class="form-control" name="telefono" id="telefono" value="{{datos.0[4]}}" pattern="[0-9]{10}"  title="Por favor, escriba el numero correctamente (10 caracteres numericos)" required minlength="10" maxlength="10">
                     </div>
                     <div class="form-group col-md-2">
                         <label for="domicilio">Domicilio</label>
@@ -33,12 +35,12 @@
                     </div>
                      <div class="form-group col-md-2">
                         <label for="nss">Numero de seguridad social</label>
-                        <input type="text" class="form-control" name="nss" id="nss" value="{{datos.0[8]}}" pattern="[0-9]{11}" required>
+                        <input type="text" class="form-control" name="nss" id="nss" value="{{datos.0[8]}}" pattern="[0-9]{11}"  title="Por favor, escriba el NSS correctamente (10 caracteres numericos)"  required minlength="11" maxlength="11">
                     </div>
 
                         <div class="form-group col-md-2">
                         <label for="edad">Edad</label>
-                        <input type="text" class="form-control" name="edad" id="edad" value="{{datos.0[7]}}" pattern="[0-9]{2}"  required>
+                        <input type="text" class="form-control" name="edad" id="edad" value="{{datos.0[7]}}" pattern="[0-9]{2}" title="Por favor ingresa la edad correcta para continuar"  required minlength="1" maxlength="2">
                     </div>
 
 
@@ -85,7 +87,8 @@
 
 <br>
 <br>
-              <button type="submit" class="btn btn-primary">Actualizar y regresar</button>
+              <button type="submit" class="btn btn-primary">Actualizar</button> &nbsp;&nbsp;&nbsp;
+
 
             </form>
 <!-- -----------------------------------------------------------------  -->
@@ -205,7 +208,7 @@
 
              <div class="panel panel-primary">
                   <div class="panel-heading" >
-                    <form class="form-inline" action="/agrega_nivel_sol/{{datos.0[0]}}/{{niveles.0[0]}}" method="post">
+                    <form class="form-inline" action="/agrega_nivel_sol/{{datos.0[0]}}" method="post">
                         <div class="form-row">
                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             <input type="hidden" name="cannv" id="cannv" value="{{datos.0[0]}}" >
@@ -272,5 +275,8 @@
 
                   </div>
             </div>
+            <br>
+            <br>
+            <center><a href="/solicitante" class="btn btn-primary">Regresar </a></center>
 
 {% endblock %}

@@ -624,7 +624,7 @@ def agrega_idio_candidato(id):
         aux_exp       = request.form['nive']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor        = conn.cursor()
-        cursor.execute("SELECT COUNT(*) from candidato_has_habilidad WHERE idHabilidad= %s and Curp = %s", (aux_hab,id))
+        cursor.execute("SELECT COUNT(*) from candidato_has_idioma WHERE idIdioma= %s and Curp = %s", (aux_hab,id))
         c_niv  = cursor.fetchone()
         if  c_niv[0] == 0:
 
@@ -719,9 +719,9 @@ def agrega_nivel_candidato(id):
         aux_ins       = request.form['ins']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor   = conn.cursor()
-        cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idNivelAcademico = %s and Curp = %s", (aux_hab,id))
-        c_niv=cursor.fetchone()
-        if  c_niv[0] == 0:
+        cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idNivelAcademico = %s and  CURP = %s ", (aux_hab,id))
+        c_hab  = cursor.fetchone()
+        if  c_hab[0] == 0:
             cursor.execute(
                 'insert into candidato_has_nivelacademico (CURP, idNivelAcademico,idCarrera,institucion) values (%s,%s,%s,%s)',
                 (aux_pto, aux_hab, aux_car, aux_ins))
@@ -829,7 +829,7 @@ def bo_candidato(id):
     else:
         error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
         conn.close()
-        return render_template("error.html", error = error, paginaant = "/candidato")
+        return render_template("error.html", error = error, paginaant = "/solicitante")
 
 
 ###########################################################################################################################################################
@@ -855,9 +855,20 @@ def agrega_nivel():
         aux_descripcion = request.form['descripcion']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('insert into nivelacademico (Descripcion) values (%s)', (aux_descripcion))
-        conn.commit()
-    return redirect(url_for('nivelacademico'))
+        cursor.execute("SELECT COUNT(*) from nivelacademico WHERE Descripcion = %s", (aux_descripcion))
+        c_niv=cursor.fetchone()
+        if c_niv[0] == 0:
+            cursor.execute('insert into nivelacademico (Descripcion) values (%s)', (aux_descripcion))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('nivelacademico'))
+        else:
+
+            error = "no se puede agregar este elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error=error,paginaant="/nivelacademico")
+
+
 
 ## abre el html para editar un nivel academico
 @app.route('/ed_nivel/<string:id>')
@@ -926,14 +937,21 @@ def nvo_habilidad():
 @app.route("/agrega_habilidad", methods=["POST"])
 def agrega_habilidad():
     if request.method == 'POST':
-        aux_descripcion = request.form['Descripcion']
-
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('insert into habilidad (Descripcion ) values (%s)', (aux_descripcion))
-        conn.commit()
-        conn.close()
-    return redirect(url_for('sel_habilidades'))
+        aux_descripcion = request.form['Descripcion']
+        cursor.execute("SELECT COUNT(*) from habilidad WHERE Descripcion= %s", (aux_descripcion))
+        c_niv=cursor.fetchone()
+        if  c_niv[0] == 0:
+            cursor.execute('insert into habilidad (Descripcion ) values (%s)', (aux_descripcion))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('sel_habilidades'))
+        else:
+            error = "no se puede agregar este elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error=error,paginaant="/habilidad")
+
 
 ## abre el html con una tabla donde estan todas las habilidades  y la opcion de agregar, editar y borrar
 @app.route('/habilidad')
@@ -1026,10 +1044,19 @@ def agrega_carrera():
         aux_descripcion = request.form['descripcion']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('insert into carrera (Descripcion) values (%s)', (aux_descripcion))
-        conn.commit()
-        conn.close()
-    return redirect(url_for('carrera'))
+        cursor.execute("SELECT COUNT(*) from carrera WHERE descripcion = %s", (aux_descripcion))
+        c_niv=cursor.fetchone()
+        if c_niv[0] == 0:
+            cursor.execute('insert into carrera (Descripcion) values (%s)', (aux_descripcion))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('carrera'))
+
+        else:
+            error = "no se puede agregar este elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/carrera")
+
 
 ## abre el html para editar una carrera
 @app.route('/ed_carrera/<string:id>')
@@ -1072,7 +1099,7 @@ def bo_carrera(id):
     s_niv=cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idCarrera = %s", (id))
     c_niv=cursor.fetchone()
-    if s_niv[0] == 0 and c_niv[0] == 0:
+    if s_niv[0] == 0 or c_niv[0] == 0:
         cursor.execute('delete from carrera where idCarrera = {0}'.format(id))
         conn.commit()
         conn.close()
@@ -1167,10 +1194,19 @@ def agrega_idioma():
         nombre = request.form['lenguaje']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('''INSERT INTO   idioma (Lenguaje) VALUES (%s);''', (nombre))
-        conn.commit()
-        conn.close()
-    return redirect(url_for('idioma'))
+        cursor.execute("SELECT COUNT(*) from idioma WHERE Lenguaje = %s", (nombre))
+        c_niv=cursor.fetchone()
+        if c_niv[0] == 0:
+            cursor.execute('''INSERT INTO   idioma (Lenguaje) VALUES (%s);''', (nombre))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('idioma'))
+
+        else:
+            error = "no se puede agregar este elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/idioma")
+
 
 ##########################################################################################################################################################
 
@@ -1310,14 +1346,18 @@ def bo_puesto(id):
 @app.route('/agrega_hab_pto', methods = ['POST'])
 def agrega_hab_pto():
     if request.method == 'POST':
+        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+        cursor        = conn.cursor()
         aux_pto       = request.form['pto']
         aux_hab       = request.form['habil']
         aux_exp       = request.form['expe']
-        conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
-        cursor        = conn.cursor()
-        cursor.execute('insert into puesto_has_habilidad (idPuesto, idHabilidad,Experiencia) values (%s,%s,%s)',
-                       (aux_pto, aux_hab, aux_exp))
-        conn.commit()
+        cursor.execute("SELECT COUNT(*) from puesto_has_habilidad WHERE idHabilidad = %s", (aux_hab))
+        ph_pue = cursor.fetchone()
+        if ph_pue[0] == 0:
+
+            cursor.execute('insert into puesto_has_habilidad (idPuesto, idHabilidad,Experiencia) values (%s,%s,%s)',
+                           (aux_pto, aux_hab, aux_exp))
+            conn.commit()
         cursor.execute(
             'select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos,Aprobacion from puesto where idPuesto=%s',
             (aux_pto))
@@ -1347,9 +1387,12 @@ def agrega_idio_pto():
         aux_niv       = request.form['nive']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor        = conn.cursor()
-        cursor.execute('INSERT INTO `puesto_has_idioma` (`idPuesto`, `idIdioma`, `Nivel`) values(%s,%s,%s)',
-                       (aux_pto, aux_idi, aux_niv))
-        conn.commit()
+        cursor.execute("SELECT COUNT(*) from puesto_has_idioma WHERE idIdioma= %s", (aux_idi))
+        ph_pue = cursor.fetchone()
+        if ph_pue[0] == 0:
+            cursor.execute('INSERT INTO `puesto_has_idioma` (`idPuesto`, `idIdioma`, `Nivel`) values(%s,%s,%s)',
+                           (aux_pto, aux_idi, aux_niv))
+            conn.commit()
         cursor.execute(
             'select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos,Aprobacion from puesto where idPuesto=%s',
             (aux_pto))
@@ -1446,10 +1489,18 @@ def agrega_area():
         aux_Descripcion = request.form['descripcion']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor          = conn.cursor()
-        cursor.execute('insert into area (AreaNombre,AreaDescripcion) values (%s,%s)', (aux_Nombre, aux_Descripcion))
-        conn.commit()
-        conn.close()
-    return redirect(url_for('area'))
+        cursor.execute("SELECT COUNT(*) from area WHERE AreaNombre = %s ", (aux_Nombre))
+        s_area = cursor.fetchone()
+        if s_area[0] == 0:
+            cursor.execute('insert into area (AreaNombre,AreaDescripcion) values (%s,%s)', (aux_Nombre, aux_Descripcion))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('area'))
+        else:
+            error = "no se puede agregar este elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/area")
+
 ## abre el html para editar un area
 
 @app.route('/edita_area/<string:id>')
@@ -1527,10 +1578,18 @@ def agrega_medio_publicidad():
         aux_descripcion = request.form['des_publicidad']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('insert into mediopublicidad (Descripcion) values (%s)', (aux_descripcion))
-        conn.commit()
-        conn.close()
-    return tabla_medio()
+        cursor.execute("SELECT COUNT(*) from mediopublicidad WHERE Descripcion = %s", (aux_descripcion))
+        a_mpublicidad       = cursor.fetchone()
+        if a_mpublicidad[0] == 0:
+            cursor.execute('insert into mediopublicidad (Descripcion) values (%s)', (aux_descripcion))
+            conn.commit()
+            conn.close()
+            return tabla_medio()
+        else:
+            error = "No se puede agregar porqur ese registro ya existe"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/medio_de_publicidad")
+
 
 ## abre el html para editar un medio de publicidad
 @app.route('/ed_medio/<string:id>')
@@ -1606,11 +1665,19 @@ def agrega_contacto():
         aux_numero    = request.form['Numero']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor = conn.cursor()
-        cursor.execute('insert into contacto (Nombre, Domicilio, Razon_Social,Telefono) values (%s,%s,%s,%s)',
+        cursor.execute("SELECT COUNT(*) from contacto WHERE Nombre = %s and Domicilio = %s and Razon_Social = %s and Telefono = %s", (aux_nombre, aux_domicilio, aux_razon, aux_numero))
+        a_contacto = cursor.fetchone()
+        if a_contacto[0] == 0:
+            cursor.execute('insert into contacto (Nombre, Domicilio, Razon_Social,Telefono) values (%s,%s,%s,%s)',
                        (aux_nombre, aux_domicilio, aux_razon, aux_numero))
-        conn.commit()
-        conn.close()
-    return redirect(url_for('contacto'))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('contacto'))
+        else:
+            error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/contacto")
+
 
 ## abre el html para editar un contacto
 @app.route('/ed_contacto/<string:id>')
