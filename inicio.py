@@ -767,6 +767,8 @@ def agrega_nivel_candidato(id):
 ## borra los niveles academicos asociados al candidato
 @app.route("/bo_nivel_sol/<string:id>/<string:idn>/<string:idc>")
 def bo_nivel_can(id, idn, idc):
+    conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+    cursor   = conn.cursor()
     cursor.execute('delete from candidato_has_nivelacademico where CURP =%s and idNivelAcademico=%s and idCarrera=%s',
                    (id, idn, idc))
     conn.commit()
@@ -1351,32 +1353,35 @@ def agrega_hab_pto():
         aux_pto       = request.form['pto']
         aux_hab       = request.form['habil']
         aux_exp       = request.form['expe']
-        cursor.execute("SELECT COUNT(*) from puesto_has_habilidad WHERE idHabilidad = %s", (aux_hab))
+        cursor.execute("SELECT COUNT(*) from puesto_has_habilidad WHERE idHabilidad = %s and idPuesto = %s", (aux_hab,aux_pto))
         ph_pue = cursor.fetchone()
         if ph_pue[0] == 0:
-
             cursor.execute('insert into puesto_has_habilidad (idPuesto, idHabilidad,Experiencia) values (%s,%s,%s)',
                            (aux_pto, aux_hab, aux_exp))
             conn.commit()
-        cursor.execute(
-            'select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos,Aprobacion from puesto where idPuesto=%s',
-            (aux_pto))
-        datos  = cursor.fetchall()
-        cursor.execute(
-            'select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto,c.idHabilidad, c.Experiencia from puesto a, habilidad b,puesto_has_habilidad c  where a.idPuesto=c.idPuesto and b.idHabilidad=c.idHabilidad and c.idPuesto=%s',
-            (aux_pto))
-        datos1 = cursor.fetchall()
-        cursor.execute(
-            'select a.idPuesto, b.idIdioma,b.Lenguaje,c.idPuesto, c.idIdioma,c.Nivel from puesto a, idioma b,puesto_has_idioma c where a.idPuesto=c.idPuesto and b.idIdioma=c.idIdioma and c.idPuesto=%s',
-            (aux_pto))
-        datos2 = cursor.fetchall()
-        cursor.execute('select idhabilidad, Descripcion from habilidad order by  Descripcion')
+            cursor.execute(
+                'select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos,Aprobacion from puesto where idPuesto=%s',
+                (aux_pto))
+            datos  = cursor.fetchall()
+            cursor.execute(
+                'select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto,c.idHabilidad, c.Experiencia from puesto a, habilidad b,puesto_has_habilidad c  where a.idPuesto=c.idPuesto and b.idHabilidad=c.idHabilidad and c.idPuesto=%s',
+                (aux_pto))
+            datos1 = cursor.fetchall()
+            cursor.execute(
+                'select a.idPuesto, b.idIdioma,b.Lenguaje,c.idPuesto, c.idIdioma,c.Nivel from puesto a, idioma b,puesto_has_idioma c where a.idPuesto=c.idPuesto and b.idIdioma=c.idIdioma and c.idPuesto=%s',
+                (aux_pto))
+            datos2 = cursor.fetchall()
+            cursor.execute('select idhabilidad, Descripcion from habilidad order by  Descripcion')
 
-        datos3 = cursor.fetchall()
-        cursor.execute('select idIdioma, Lenguaje from idioma order by Lenguaje')
-        datos4 = cursor.fetchall()
-        conn.close()
-        return render_template("edi_puesto.html", puestos = datos, pue_habs = datos1, pue_idis = datos2, habs = datos3, idiomas = datos4)
+            datos3 = cursor.fetchall()
+            cursor.execute('select idIdioma, Lenguaje from idioma order by Lenguaje')
+            datos4 = cursor.fetchall()
+            conn.close()
+            return render_template("edi_puesto.html", puestos = datos, pue_habs = datos1, pue_idis = datos2, habs = datos3, idiomas = datos4)
+        else:
+            error = "no se puede agregar este elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/ed_puesto/"+aux_pto)
 
 ## agrega in idioma que este ligado con el puesto
 @app.route('/agrega_idio_pto', methods = ['POST'])
@@ -1387,31 +1392,35 @@ def agrega_idio_pto():
         aux_niv       = request.form['nive']
         conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
         cursor        = conn.cursor()
-        cursor.execute("SELECT COUNT(*) from puesto_has_idioma WHERE idIdioma= %s", (aux_idi))
+        cursor.execute("SELECT COUNT(*) from puesto_has_idioma WHERE idIdioma= %s and idPuesto = %s", (aux_idi, aux_pto))
         ph_pue = cursor.fetchone()
         if ph_pue[0] == 0:
             cursor.execute('INSERT INTO `puesto_has_idioma` (`idPuesto`, `idIdioma`, `Nivel`) values(%s,%s,%s)',
                            (aux_pto, aux_idi, aux_niv))
             conn.commit()
-        cursor.execute(
-            'select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos,Aprobacion from puesto where idPuesto=%s',
-            (aux_pto))
-        datos  = cursor.fetchall()
-        cursor.execute(
-            '''select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto,c.idHabilidad, c.Experiencia
-            from puesto a, habilidad b,puesto_has_habilidad c  where a.idPuesto=c.idPuesto and b.idHabilidad=c.idHabilidad and c.idPuesto=%s''',
-            (aux_pto))
-        datos1 = cursor.fetchall()
-        cursor.execute(
-            'select a.idPuesto, b.idIdioma,b.Lenguaje,c.idPuesto, c.idIdioma,c.Nivel from puesto a, idioma b,puesto_has_idioma c where a.idPuesto=c.idPuesto and b.idIdioma=c.idIdioma and c.idPuesto=%s',
-            (aux_pto))
-        datos2 = cursor.fetchall()
-        cursor.execute('select idhabilidad, Descripcion from habilidad order by Descripcion')
-        datos3 = cursor.fetchall()
-        cursor.execute('select idIdioma, Lenguaje from idioma order by Lenguaje')
-        datos4 = cursor.fetchall()
-        conn.close()
-        return render_template("edi_puesto.html", puestos = datos, pue_habs = datos1, pue_idis = datos2, habs = datos3, idiomas = datos4)
+            cursor.execute(
+                'select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos,Aprobacion from puesto where idPuesto=%s',
+                (aux_pto))
+            datos  = cursor.fetchall()
+            cursor.execute(
+                '''select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto,c.idHabilidad, c.Experiencia
+                from puesto a, habilidad b,puesto_has_habilidad c  where a.idPuesto=c.idPuesto and b.idHabilidad=c.idHabilidad and c.idPuesto=%s''',
+                (aux_pto))
+            datos1 = cursor.fetchall()
+            cursor.execute(
+                'select a.idPuesto, b.idIdioma,b.Lenguaje,c.idPuesto, c.idIdioma,c.Nivel from puesto a, idioma b,puesto_has_idioma c where a.idPuesto=c.idPuesto and b.idIdioma=c.idIdioma and c.idPuesto=%s',
+                (aux_pto))
+            datos2 = cursor.fetchall()
+            cursor.execute('select idhabilidad, Descripcion from habilidad order by Descripcion')
+            datos3 = cursor.fetchall()
+            cursor.execute('select idIdioma, Lenguaje from idioma order by Lenguaje')
+            datos4 = cursor.fetchall()
+            conn.close()
+            return render_template("edi_puesto.html", puestos = datos, pue_habs = datos1, pue_idis = datos2, habs = datos3, idiomas = datos4)
+        else:
+            error = "no se puede agregar este elemento porque ya existe"
+            conn.close()
+            return render_template("error.html", error = error, paginaant = "/ed_puesto/"+aux_pto)
 ## borra una habilidad que haya estado ligada al puesto
 
 @app.route('/bo_hab_pto/<string:idP>/<string:idH>')
