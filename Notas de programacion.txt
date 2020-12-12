@@ -1,0 +1,31 @@
+--------si se va a probar el codigo en el local cambia la coneccion------------------------
+
+conn = pymysql.connect(host='localhost', user='root', passwd='', db='r_humanos')
+-------- que no se te olvide regresar a la coneccion de pythonanywhere---------------------
+
+conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
+
+
+
+------- para exportar la base de datos en el bash de pythonanywhere------------------------
+mysqldump -u NovaTech -h NovaTech.mysql.pythonanywhere-services.com -p 'NovaTech$default' > backup.sql
+
+
+
+------ esta parte del codigo esta cometada al final, quitale el comentario cuando pruebes en el local----------
+if __name__ == "__main__":
+    app.run(port=3000, debug=True)
+
+
+
+-------para hacer una copia de seguridad a github crea otra rama en ella -----------------------
+git init
+git add .
+git commit -m 'codigo_final'  (esto cambialo por el nombre que le quieras dar a la version)
+git branch codigo_final       (esto cambialo por el nombre que le quieras dar a la version)
+git checkout codigo_final     (esto cambialo por el nombre que le quieras dar a la version)
+git remote add origin https://github.com/Aratt-Gaytan/nova_tech.git (cambialo si quieres por un nuevo repositorio (no  supe cambiarlo, asi que no tengo ese codigo))
+git push -u origin codigo_final (esto cambialo por el nombre que le quieras dar a la version)
+
+
+---------si falta algo, o no lo tengo o se me olvido, pero traten este codigo como si fuera su propio hijo :,)---------
