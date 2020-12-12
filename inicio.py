@@ -346,7 +346,7 @@ def bo_perfil(id):
     ph_pue = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from Usuario WHERE idperfil_admo= %s", (id))
     pi_pue = cursor.fetchone()
-    if ph_pue[0] == 0 or pi_pue[0] == 0 :
+    if ph_pue[0] == 0 and pi_pue[0] == 0 :
         cursor.execute('delete from perfil_admo where idperfil_admo = {0}'.format(id))
         conn.commit()
         conn.close()
@@ -400,7 +400,7 @@ def agrega_candidato():
         c_niv  = cursor.fetchone()
         cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE CURP = %s", (aux_curp))
         c_hab  = cursor.fetchone()
-        if s_niv[0] == 0 or c_niv[0] == 0 or c_hab[0] == 0:
+        if s_niv[0] == 0 and c_niv[0] == 0 and c_hab[0] == 0:
             cursor.execute('''insert into candidato(CURP,RFC, Nombre,Domicilio, Telefono,E_mail,
                 Sexo,Edad,NSS,idEstadoCivil) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)''',
                 (aux_curp, aux_rfc, aux_nombre, aux_domicilio,aux_telefono, aux_email, aux_sexo, aux_edad, aux_nss, aux_estadociv))
@@ -507,7 +507,7 @@ def modifica_candidato(id):
         c_niv  = cursor.fetchone()
         cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE CURP = %s", (id))
         c_hab  = cursor.fetchone()
-        if s_niv[0] == 0 or c_niv[0] == 0 or c_hab[0] == 0:
+        if s_niv[0] == 0 and c_niv[0] == 0 and c_hab[0] == 0:
             cursor.execute('''UPDATE candidato SET Curp =%s, RFC =%s, Nombre =%s, Domicilio =%s,
                 Telefono =%s, E_mail =%s, Sexo =%s, Edad =%s, NSS =%s, idEstadoCivil=%s WHERE Curp =%s''' ,
             (aux_curp, aux_rfc, aux_nombre, aux_domicilio,
@@ -817,7 +817,7 @@ def bo_candidato(id):
     c_niv  = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE CURP = %s", (id))
     c_hab  = cursor.fetchone()
-    if s_niv[0] == 0 or c_niv[0] == 0 or c_hab[0] == 0:
+    if s_niv[0] == 0 and c_niv[0] == 0 and c_hab[0] == 0:
         cursor.execute('delete from candidato_has_idioma where CURP = %s',(id))
         conn.commit()
         cursor.execute('delete from candidato_has_habilidad where CURP = %s',(id))
@@ -881,7 +881,7 @@ def ed_nivel(id):
     s_niv=cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idNivelAcademico = %s", (id))
     c_niv=cursor.fetchone()
-    if s_niv[0] == 0 or c_niv[0] == 0:
+    if s_niv[0] == 0 and c_niv[0] == 0:
         cursor.execute('select idNivelAcademico, descripcion from nivelacademico where idNivelAcademico = %s', (id))
         dato = cursor.fetchall()
         conn.close()
@@ -912,13 +912,14 @@ def bo_nivel(id):
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) from solicitud WHERE idNivelAcademico = %s", (id))
     s_niv=cursor.fetchone()
+    print(s_niv)
     cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idNivelAcademico = %s", (id))
     c_niv=cursor.fetchone()
-    if s_niv[0] == 0 or c_niv[0] == 0:
+    print(c_niv)
+    if s_niv[0] == 0 and c_niv[0] == 0:
         cursor.execute('delete  from nivelacademico where idNivelAcademico = %s', (id))
         conn.commit()
         conn.close()
-
         return redirect(url_for('nivelacademico'))
     else:
         error = "no se puede eliminar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
@@ -975,7 +976,7 @@ def ed_habilidad(id):
     s_niv=cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_habilidad WHERE idHabilidad= %s", (id))
     c_niv=cursor.fetchone()
-    if s_niv[0] == 0 or c_niv[0] == 0:
+    if s_niv[0] == 0 and c_niv[0] == 0:
         cursor.execute('select idHabilidad,Descripcion  from habilidad where idHabilidad = %s', (id))
         dato = cursor.fetchall()
         conn.close()
@@ -1009,7 +1010,7 @@ def borrar_habilidad(id):
     s_niv=cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_habilidad WHERE idHabilidad= %s", (id))
     c_niv=cursor.fetchone()
-    if s_niv[0] == 0 or c_niv[0] == 0:
+    if s_niv[0] == 0 and c_niv[0] == 0 :
         cursor.execute('delete from habilidad where idHabilidad = {0}'.format(id))
         conn.commit()
         conn.close()
@@ -1069,7 +1070,7 @@ def ed_carrera(id):
     s_niv=cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idCarrera = %s", (id))
     c_niv=cursor.fetchone()
-    if s_niv[0] == 0 or c_niv[0] == 0:
+    if s_niv[0] == 0 and c_niv[0] == 0:
         cursor.execute('select idCarrera, descripcion from carrera where idCarrera = %s', (id))
         dato = cursor.fetchall()
         conn.close()
@@ -1101,7 +1102,7 @@ def bo_carrera(id):
     s_niv=cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_nivelacademico WHERE idCarrera = %s", (id))
     c_niv=cursor.fetchone()
-    if s_niv[0] == 0 or c_niv[0] == 0:
+    if s_niv[0] == 0 and c_niv[0] == 0:
         cursor.execute('delete from carrera where idCarrera = {0}'.format(id))
         conn.commit()
         conn.close()
@@ -1144,7 +1145,7 @@ def edi_idioma(id):
     s_niv  = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_idioma WHERE idIdioma = %s", (id))
     c_niv  = cursor.fetchone()
-    if s_niv[0] == 0 or c_niv[0] == 0:
+    if s_niv[0] == 0 and c_niv[0] == 0:
         cursor.execute(
         'select Lenguaje from idioma WHERE ididioma = %s', (id))
         idiomas = cursor.fetchall()
@@ -1178,7 +1179,7 @@ def bo_idioma(id):
     s_niv  = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from candidato_has_idioma WHERE idIdioma = %s", (id))
     c_niv  = cursor.fetchone()
-    if s_niv[0] == 0 or c_niv[0] == 0:
+    if s_niv[0] == 0 and c_niv[0] == 0:
         cursor.execute(""" DELETE FROM idioma WHERE ididioma = %s;""", (id))
         conn.commit()
         conn.close()
@@ -1289,35 +1290,24 @@ def ed_puesto(id):
     conn = pymysql.connect(host='NovaTech.mysql.pythonanywhere-services.com', user='NovaTech', passwd='tacosdechile', db='NovaTech$default')
     cursor = conn.cursor()
 
-    cursor.execute("SELECT COUNT(*) from puesto_has_habilidad WHERE idPuesto = %s", (id))
-    ph_pue = cursor.fetchone()
-    cursor.execute("SELECT COUNT(*) from puesto_has_idioma WHERE idPuesto = %s", (id))
-    pi_pue = cursor.fetchone()
-    cursor.execute("SELECT COUNT(*) from solicitud WHERE idPuesto = %s", (id))
-    s_pue  = cursor.fetchone()
-    if ph_pue[0] == 0 or pi_pue[0] == 0 or s_pue[0] == 0:
-        cursor.execute('select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos, Aprobacion '
-                   'from puesto where idPuesto=%s', (id))
-        datos  = cursor.fetchall()
-        cursor.execute(
-            'select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto, c.idHabilidad,c.Experiencia  from puesto a, habilidad b,puesto_has_habilidad c  where a.idPuesto=c.idPuesto and b.idHabilidad=c.idHabilidad and c.idPuesto=%s',
-            (id))
-        datos1 = cursor.fetchall()
-        cursor.execute(
-            'select a.idPuesto, b.idIdioma,b.Lenguaje,c.idPuesto, c.idIdioma, c.Nivel from puesto a, idioma b,puesto_has_idioma c where a.idPuesto=c.idPuesto and b.idIdioma=c.idIdioma and c.idPuesto=%s',
-            (id))
+    cursor.execute('select idPuesto, Descripcion, SalarioAnual, Beneficios, Bonos, Aprobacion '
+               'from puesto where idPuesto=%s', (id))
+    datos  = cursor.fetchall()
+    cursor.execute(
+        'select a.idPuesto, b.idHabilidad,b.Descripcion,c.idPuesto, c.idHabilidad,c.Experiencia  from puesto a, habilidad b,puesto_has_habilidad c  where a.idPuesto=c.idPuesto and b.idHabilidad=c.idHabilidad and c.idPuesto=%s',
+        (id))
+    datos1 = cursor.fetchall()
+    cursor.execute(
+        'select a.idPuesto, b.idIdioma,b.Lenguaje,c.idPuesto, c.idIdioma, c.Nivel from puesto a, idioma b,puesto_has_idioma c where a.idPuesto=c.idPuesto and b.idIdioma=c.idIdioma and c.idPuesto=%s',
+        (id))
 
-        datos2 = cursor.fetchall()
-        cursor.execute('select idhabilidad, Descripcion from habilidad order by Descripcion')
-        datos3 = cursor.fetchall()
-        cursor.execute('select idIdioma, Lenguaje from idioma order by Lenguaje')
-        datos4 = cursor.fetchall()
-        conn.close()
-        return render_template("edi_puesto.html", puestos = datos, pue_habs = datos1, pue_idis = datos2, habs = datos3, idiomas = datos4)
-    else:
-        error = "no se puede editar ese elemento, ya que tiene relacion con otras tablas, elimina las relaciones y vuelve a intentarlo"
-        conn.close()
-        return render_template("error.html", error = error, paginaant = "/puesto")
+    datos2 = cursor.fetchall()
+    cursor.execute('select idhabilidad, Descripcion from habilidad order by Descripcion')
+    datos3 = cursor.fetchall()
+    cursor.execute('select idIdioma, Lenguaje from idioma order by Lenguaje')
+    datos4 = cursor.fetchall()
+    conn.close()
+    return render_template("edi_puesto.html", puestos = datos, pue_habs = datos1, pue_idis = datos2, habs = datos3, idiomas = datos4)
 
 ## borra el nivel academico
 @app.route('/bo_puesto/<string:id>')
@@ -1330,7 +1320,7 @@ def bo_puesto(id):
     pi_pue = cursor.fetchone()
     cursor.execute("SELECT COUNT(*) from solicitud WHERE idPuesto = %s", (id))
     s_pue  = cursor.fetchone()
-    if ph_pue[0] == 0 or pi_pue[0] == 0 or s_pue[0] == 0:
+    if ph_pue[0] == 0 and pi_pue[0] == 0 and s_pue[0] == 0:
         cursor.execute('delete from puesto_has_idioma where idPuesto = {0}'.format(id))
         conn.commit()
         cursor.execute('delete from puesto_has_habilidad where idPuesto = {0}'.format(id))
